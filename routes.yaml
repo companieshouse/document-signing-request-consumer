@@ -1,5 +1,4 @@
-app_name: item-group-consumer
+app_name: document-signing-request-consumer
 group: api
 weight: 911
-routes:
-  1: ^/item-group-consumer/healthcheck
+routes:document-signing-request-consumeritem-group-consumer/healthcheck

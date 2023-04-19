@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.aspectj.lang.JoinPoint;
@@ -62,10 +63,10 @@ public class MessageLoggingAspect {
                 .orElse(0);
         Long offset = Optional.ofNullable((Long) incomingMessage.getHeaders().get(KafkaHeaders.OFFSET))
                 .orElse(0L);
-        Map<String, Object> logData = Map.of(
+        Map<String, Object> logData = new HashMap<>(Map.of(
                 "topic", topic,
                 "partition", partition,
-                "offset", offset);
+                "offset", offset));
         LOGGER.debug(logMessage, logData);
     }
 }

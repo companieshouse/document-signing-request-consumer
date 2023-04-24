@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
+import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+
 import java.util.Objects;
 
 /**
@@ -7,9 +9,9 @@ import java.util.Objects;
  */
 public class ServiceParameters {
 
-    private final String data;
+    private final SignDigitalDocument data;
 
-    public ServiceParameters(String data) {
+    public ServiceParameters(SignDigitalDocument data) {
         this.data = data;
     }
 
@@ -18,7 +20,7 @@ public class ServiceParameters {
      *
      * @return A string representing data that has been attached to the ServiceParameters object.
      */
-    public String getData() {
+    public SignDigitalDocument getData() {
         return data;
     }
 

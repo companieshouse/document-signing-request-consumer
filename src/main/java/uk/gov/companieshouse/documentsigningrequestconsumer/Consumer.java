@@ -7,6 +7,7 @@ import org.springframework.kafka.retrytopic.FixedDelayStrategy;
 import org.springframework.messaging.Message;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 
 /**
  * Consumes messages from the configured main Kafka topic.
@@ -44,7 +45,7 @@ public class Consumer {
             fixedDelayTopicStrategy = FixedDelayStrategy.SINGLE_TOPIC,
             include = RetryableException.class
     )
-    public void consume(Message<String> message) {
+    public void consume(Message<SignDigitalDocument> message) {
         try {
             service.processMessage(new ServiceParameters(message.getPayload()));
         } catch (RetryableException e) {

@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
 import java.util.Map;
+
+import consumer.deserialization.AvroDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -23,27 +25,31 @@ import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.util.backoff.FixedBackOff;
+import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+import uk.gov.companieshouse.kafka.exceptions.SerializationException;
+import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 
 @Configuration
 @EnableKafka
 public class Config {
 
     @Bean
-    public ConsumerFactory<String, String> consumerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+    public ConsumerFactory<String, SignDigitalDocument> consumerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
         return new DefaultKafkaConsumerFactory<>(
                 Map.of(
                         ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
                         ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class,
                         ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class,
                         ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class,
-                        ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, StringDeserializer.class,
+                        ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, AvroDeserializer.class,
                         ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest",
                         ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false"),
-                new StringDeserializer(), new ErrorHandlingDeserializer<>(new StringDeserializer()));
+                new StringDeserializer(),
+                new ErrorHandlingDeserializer<>(new AvroDeserializer<>(SignDigitalDocument.class)));
     }
 
     @Bean
-    public ProducerFactory<String, String> producerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
+    public ProducerFactory<String, SignDigitalDocument> producerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
             MessageFlags messageFlags,
             @Value("${invalid_message_topic}") String invalidMessageTopic) {
         return new DefaultKafkaProducerFactory<>(
@@ -55,18 +61,25 @@ public class Config {
                         ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, InvalidMessageRouter.class.getName(),
                         "message.flags", messageFlags,
                         "invalid.message.topic", invalidMessageTopic),
-                new StringSerializer(), new StringSerializer());
+                new StringSerializer(),
+                (topic, data) -> {
+                    try {
+                        return new SerializerFactory().getSpecificRecordSerializer(SignDigitalDocument.class).toBinary(data); //creates a leading space
+                    } catch (SerializationException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> producerFactory) {
+    public KafkaTemplate<String, SignDigitalDocument> kafkaTemplate(ProducerFactory<String, SignDigitalDocument> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory(ConsumerFactory<String, String> consumerFactory,
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, SignDigitalDocument>> kafkaListenerContainerFactory(ConsumerFactory<String, SignDigitalDocument> consumerFactory,
             @Value("${consumer.concurrency}") Integer concurrency) {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(concurrency);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
@@ -74,10 +87,10 @@ public class Config {
     }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaErrorListenerContainerFactory(CommonErrorHandler errorConsumerErrorHandler,
-            ConsumerFactory<String, String> consumerFactory,
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, SignDigitalDocument>> kafkaErrorListenerContainerFactory(CommonErrorHandler errorConsumerErrorHandler,
+            ConsumerFactory<String, SignDigitalDocument> consumerFactory,
             @Value("${error_consumer.concurrency}") Integer concurrency) {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(concurrency);
         factory.setCommonErrorHandler(errorConsumerErrorHandler);
@@ -86,7 +99,7 @@ public class Config {
     }
 
     @Bean
-    public CommonErrorHandler errorConsumerErrorHandler(KafkaTemplate<String, String> kafkaTemplate, FixedDestinationResolver fixedDestinationResolver) {
+    public CommonErrorHandler errorConsumerErrorHandler(KafkaTemplate<String, SignDigitalDocument> kafkaTemplate, FixedDestinationResolver fixedDestinationResolver) {
         return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate, fixedDestinationResolver::resolve), new FixedBackOff(100, 0));
     }
 }

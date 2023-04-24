@@ -15,6 +15,7 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
 
 @SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -42,10 +44,10 @@ class ErrorConsumerNonRetryableExceptionTest {
     private EmbeddedKafkaBroker embeddedKafkaBroker;
 
     @Autowired
-    private KafkaConsumer<String, String> testConsumer;
+    private KafkaConsumer<String, SignDigitalDocument> testConsumer;
 
     @Autowired
-    private KafkaProducer<String, String> testProducer;
+    private KafkaProducer<String, SignDigitalDocument> testProducer;
 
     @Autowired
     private CountDownLatch latch;
@@ -60,17 +62,17 @@ class ErrorConsumerNonRetryableExceptionTest {
         doThrow(NonRetryableException.class).when(service).processMessage(any());
 
         //when
-        testProducer.send(new ProducerRecord<>("echo-echo-consumer-error", 0, System.currentTimeMillis(), "key", "value"));
+        testProducer.send(new ProducerRecord<>("echo-echo-consumer-error", 0, System.currentTimeMillis(), "key", DOCUMENT));
         if (!latch.await(30L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }
 
         //then
-        ConsumerRecords<String, String> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(0));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-retry"), is(0));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-error"), is(1));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-invalid"), is(1));
-        verify(service).processMessage(new ServiceParameters("value"));
+        verify(service).processMessage(new ServiceParameters(DOCUMENT));
     }
 }

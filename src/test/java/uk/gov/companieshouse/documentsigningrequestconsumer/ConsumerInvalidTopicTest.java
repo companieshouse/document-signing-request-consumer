@@ -2,6 +2,7 @@ package uk.gov.companieshouse.documentsigningrequestconsumer;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -20,6 +21,7 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 
 @SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -37,10 +39,10 @@ class ConsumerInvalidTopicTest {
     private EmbeddedKafkaBroker embeddedKafkaBroker;
 
     @Autowired
-    private KafkaConsumer<String, String> testConsumer;
+    private KafkaConsumer<String, SignDigitalDocument> testConsumer;
 
     @Autowired
-    private KafkaProducer<String, String> testProducer;
+    private KafkaProducer<String, SignDigitalDocument> testProducer;
 
     @Test
     void testPublishToInvalidMessageTopicIfInvalidDataDeserialised() throws InterruptedException, ExecutionException {
@@ -48,7 +50,7 @@ class ConsumerInvalidTopicTest {
         embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
 
         //when
-        Future<RecordMetadata> future = testProducer.send(new ProducerRecord<>("echo", 0, System.currentTimeMillis(), "key", "value"));
+        Future<RecordMetadata> future = testProducer.send(new ProducerRecord<>("echo", 0, System.currentTimeMillis(), "key", DOCUMENT));
         future.get();
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
 

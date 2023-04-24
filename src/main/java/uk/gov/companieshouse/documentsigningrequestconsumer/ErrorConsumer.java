@@ -11,6 +11,7 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -63,7 +64,7 @@ public class ErrorConsumer<T> {
             groupId = "${error_consumer.group_id}",
             autoStartup = "${error_consumer.enabled}"
     )
-    public void consume(Message<String> message, Acknowledgment acknowledgment) {
+    public void consume(Message<SignDigitalDocument> message, Acknowledgment acknowledgment) {
         KafkaConsumer<?, ?> consumer = Optional.ofNullable((KafkaConsumer<?, ?>) message.getHeaders().get(KafkaHeaders.CONSUMER))
                 .orElseThrow(() -> new NonRetryableException("Missing consumer header"));
         String topic = (String) message.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC);

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
 
 @ExtendWith(MockitoExtension.class)
 class InvalidMessageRouterTest {
@@ -32,23 +34,23 @@ class InvalidMessageRouterTest {
     @Test
     void testOnSendRoutesMessageToInvalidMessageTopicIfNonRetryableExceptionThrown() {
         // given
-        ProducerRecord<String, String> message = new ProducerRecord<>("main", "key", "value");
+        ProducerRecord<String, SignDigitalDocument> message = new ProducerRecord<>("main", "key", DOCUMENT);
 
         // when
-        ProducerRecord<String, String> actual = invalidMessageRouter.onSend(message);
+        ProducerRecord<String, SignDigitalDocument> actual = invalidMessageRouter.onSend(message);
 
         // then
-        assertThat(actual, is(equalTo(new ProducerRecord<>("invalid", "key", "value"))));
+        assertThat(actual, is(equalTo(new ProducerRecord<>("invalid", "key", DOCUMENT))));
     }
 
     @Test
     void testOnSendRoutesMessageToTargetTopicIfRetryableExceptionThrown() {
         // given
-        ProducerRecord<String, String> message = new ProducerRecord<>("main", "key", "value");
+        ProducerRecord<String, SignDigitalDocument> message = new ProducerRecord<>("main", "key", DOCUMENT);
         when(flags.isRetryable()).thenReturn(true);
 
         // when
-        ProducerRecord<String, String> actual = invalidMessageRouter.onSend(message);
+        ProducerRecord<String, SignDigitalDocument> actual = invalidMessageRouter.onSend(message);
 
         // then
         assertThat(actual, is(sameInstance(message)));

@@ -33,8 +33,8 @@ public class MessageLoggingAspect {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NAMESPACE);
 
-    private static final String LOG_MESSAGE_RECEIVED = "Processing delta";
-    private static final String LOG_MESSAGE_PROCESSED = "Processed delta";
+    private static final String LOG_MESSAGE_RECEIVED = "Processing kafka message";
+    private static final String LOG_MESSAGE_PROCESSED = "Processed kafka message";
 
     @Before("execution(* uk.gov.companieshouse.documentsigningrequestconsumer.Consumer.consume(..))")
     void logBeforeMainConsumer(JoinPoint joinPoint) {
@@ -66,7 +66,8 @@ public class MessageLoggingAspect {
         Map<String, Object> logData = new HashMap<>(Map.of(
                 "topic", topic,
                 "partition", partition,
-                "offset", offset));
+                "offset", offset,
+                "kafka message", incomingMessage.getPayload())); // TODO DCAC-75 Structured logging.
         LOGGER.debug(logMessage, logData);
     }
 }

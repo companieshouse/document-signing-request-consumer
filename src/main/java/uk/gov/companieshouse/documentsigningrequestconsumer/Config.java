@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
-import java.util.Map;
-
 import consumer.deserialization.AvroDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -12,14 +10,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.CommonErrorHandler;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
@@ -28,6 +24,8 @@ import org.springframework.util.backoff.FixedBackOff;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
+
+import java.util.Map;
 
 @Configuration
 @EnableKafka
@@ -77,7 +75,7 @@ public class Config {
     }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, SignDigitalDocument>> kafkaListenerContainerFactory(ConsumerFactory<String, SignDigitalDocument> consumerFactory,
+    public ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> kafkaListenerContainerFactory(ConsumerFactory<String, SignDigitalDocument> consumerFactory,
             @Value("${consumer.concurrency}") Integer concurrency) {
         ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
@@ -87,7 +85,7 @@ public class Config {
     }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, SignDigitalDocument>> kafkaErrorListenerContainerFactory(CommonErrorHandler errorConsumerErrorHandler,
+    public ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> kafkaErrorListenerContainerFactory(CommonErrorHandler errorConsumerErrorHandler,
             ConsumerFactory<String, SignDigitalDocument> consumerFactory,
             @Value("${error_consumer.concurrency}") Integer concurrency) {
         ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> factory = new ConcurrentKafkaListenerContainerFactory<>();

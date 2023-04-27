@@ -13,6 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAME_PARTITION_KEY;
 
 /**
  * "Test" class re-purposed to produce {@link SignDigitalDocument} messages to the <code>sign-digital-document</code>
@@ -27,7 +28,7 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOC
 @SuppressWarnings("squid:S3577") // This is NOT to be run as part of an automated test suite.
 class SignDigitalDocumentInTiltProducer {
 
-    private static final String KAFKA_IN_TILT_BOOTSTRAP_SERVER_UTL = "localhost:29092";
+    private static final String KAFKA_IN_TILT_BOOTSTRAP_SERVER_URL = "localhost:29092";
 
     @Rule
     private static final EnvironmentVariables ENVIRONMENT_VARIABLES;
@@ -36,7 +37,7 @@ class SignDigitalDocumentInTiltProducer {
         ENVIRONMENT_VARIABLES = new EnvironmentVariables();
         ENVIRONMENT_VARIABLES.set("MAX_ATTEMPTS", "4");
         ENVIRONMENT_VARIABLES.set("BACKOFF_DELAY", "100");
-        ENVIRONMENT_VARIABLES.set("BOOTSTRAP_SERVER_URL", KAFKA_IN_TILT_BOOTSTRAP_SERVER_UTL);
+        ENVIRONMENT_VARIABLES.set("BOOTSTRAP_SERVER_URL", KAFKA_IN_TILT_BOOTSTRAP_SERVER_URL);
         ENVIRONMENT_VARIABLES.set("CONCURRENT_LISTENER_INSTANCES", "1");
         ENVIRONMENT_VARIABLES.set("CONCURRENT_ERROR_LISTENER_INSTANCES", "1");
         ENVIRONMENT_VARIABLES.set("TOPIC", "sign-digital-document");
@@ -54,6 +55,7 @@ class SignDigitalDocumentInTiltProducer {
     @SuppressWarnings("squid:S2699") // at least one assertion
     @Test
     void produceMessageToTilt() {
-        testProducer.send(new ProducerRecord<>("sign-digital-document", 0, System.currentTimeMillis(), "key", DOCUMENT));
+        testProducer.send(new ProducerRecord<>(
+                "sign-digital-document", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT));
     }
 }

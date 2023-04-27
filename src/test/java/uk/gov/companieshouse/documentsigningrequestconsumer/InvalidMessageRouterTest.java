@@ -16,6 +16,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAME_PARTITION_KEY;
 
 @ExtendWith(MockitoExtension.class)
 class InvalidMessageRouterTest {
@@ -34,19 +35,21 @@ class InvalidMessageRouterTest {
     @Test
     void testOnSendRoutesMessageToInvalidMessageTopicIfNonRetryableExceptionThrown() {
         // given
-        ProducerRecord<String, SignDigitalDocument> message = new ProducerRecord<>("main", "key", DOCUMENT);
+        ProducerRecord<String, SignDigitalDocument> message =
+                new ProducerRecord<>("main", SAME_PARTITION_KEY, DOCUMENT);
 
         // when
         ProducerRecord<String, SignDigitalDocument> actual = invalidMessageRouter.onSend(message);
 
         // then
-        assertThat(actual, is(equalTo(new ProducerRecord<>("invalid", "key", DOCUMENT))));
+        assertThat(actual, is(equalTo(new ProducerRecord<>("invalid", SAME_PARTITION_KEY, DOCUMENT))));
     }
 
     @Test
     void testOnSendRoutesMessageToTargetTopicIfRetryableExceptionThrown() {
         // given
-        ProducerRecord<String, SignDigitalDocument> message = new ProducerRecord<>("main", "key", DOCUMENT);
+        ProducerRecord<String, SignDigitalDocument> message =
+                new ProducerRecord<>("main", SAME_PARTITION_KEY, DOCUMENT);
         when(flags.isRetryable()).thenReturn(true);
 
         // when

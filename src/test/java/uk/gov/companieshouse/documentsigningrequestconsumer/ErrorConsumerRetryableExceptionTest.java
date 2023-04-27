@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAME_PARTITION_KEY;
 
 @SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -62,7 +63,8 @@ class ErrorConsumerRetryableExceptionTest {
         doThrow(RetryableException.class).when(service).processMessage(any());
 
         //when
-        testProducer.send(new ProducerRecord<>("echo-echo-consumer-error", 0, System.currentTimeMillis(), "key", DOCUMENT));
+        testProducer.send(new ProducerRecord<>(
+                "echo-echo-consumer-error", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT));
         if (!latch.await(30L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }

@@ -14,4 +14,6 @@ public class Constants {
             .setItemGroup("TODO")
             .build();
 
+    public static final String SAME_PARTITION_KEY = "key";
+
 }

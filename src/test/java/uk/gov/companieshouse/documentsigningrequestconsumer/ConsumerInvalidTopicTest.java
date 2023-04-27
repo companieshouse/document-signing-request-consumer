@@ -3,6 +3,7 @@ package uk.gov.companieshouse.documentsigningrequestconsumer;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAME_PARTITION_KEY;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -50,7 +51,13 @@ class ConsumerInvalidTopicTest {
         embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
 
         //when
-        Future<RecordMetadata> future = testProducer.send(new ProducerRecord<>("echo", 0, System.currentTimeMillis(), "key", DOCUMENT));
+        Future<RecordMetadata> future =
+                testProducer.send(new ProducerRecord<>(
+                        "echo",
+                        0,
+                        System.currentTimeMillis(),
+                        SAME_PARTITION_KEY,
+                        DOCUMENT));
         future.get();
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
 

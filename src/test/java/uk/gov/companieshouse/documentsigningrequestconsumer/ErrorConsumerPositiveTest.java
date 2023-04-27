@@ -25,6 +25,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAME_PARTITION_KEY;
 
 @SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -59,7 +60,8 @@ class ErrorConsumerPositiveTest {
         embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
 
         //when
-        testProducer.send(new ProducerRecord<>("echo-echo-consumer-error", 0, System.currentTimeMillis(), "key", DOCUMENT));
+        testProducer.send(new ProducerRecord<>(
+                "echo-echo-consumer-error", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT));
         if (!latch.await(30L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }

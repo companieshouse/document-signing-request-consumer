@@ -10,7 +10,7 @@ spring:
 consumer:
   topic: echo
   group_id: echo-consumer
-  max_attempts: 5
+  max_attempts: 4
   backoff_delay: 100
   concurrency: 1
 

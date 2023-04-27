@@ -71,9 +71,9 @@ class ConsumerRetryableExceptionTest {
         //then
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 6);
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-retry"), is(4));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-retry"), is(3));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-error"), is(1));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-invalid"), is(0));
-        verify(service, times(5)).processMessage(new ServiceParameters(DOCUMENT));
+        verify(service, times(4)).processMessage(new ServiceParameters(DOCUMENT));
     }
 }

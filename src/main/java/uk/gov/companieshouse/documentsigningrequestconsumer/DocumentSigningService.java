@@ -3,13 +3,13 @@ package uk.gov.companieshouse.documentsigningrequestconsumer;
 import org.springframework.stereotype.Component;
 
 /**
- * The default service.
+ * Makes sign PDF requests to the Document Signing API.
  */
 @Component
-class NullService implements Service {
+class DocumentSigningService implements Service {
 
     @Override
     public void processMessage(ServiceParameters parameters) {
-        throw new NonRetryableException("Unable to handle message");
+        // TODO Implement this
     }
 }

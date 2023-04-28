@@ -24,8 +24,12 @@ import org.springframework.util.backoff.FixedBackOff;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.util.Map;
+
+import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication.NAMESPACE;
 
 @Configuration
 @EnableKafka
@@ -99,5 +103,10 @@ public class Config {
     @Bean
     public CommonErrorHandler errorConsumerErrorHandler(KafkaTemplate<String, SignDigitalDocument> kafkaTemplate, FixedDestinationResolver fixedDestinationResolver) {
         return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate, fixedDestinationResolver::resolve), new FixedBackOff(100, 0));
+    }
+
+    @Bean
+    Logger getLogger() {
+        return LoggerFactory.getLogger(NAMESPACE);
     }
 }

@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
-import java.util.Optional;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,11 +12,9 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.util.Collections;
-
-import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication.NAMESPACE;
+import java.util.Optional;
 
 /**
  * Consumes messages from the configured error Kafka topic.
@@ -25,24 +22,25 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigni
 @Component
 public class ErrorConsumer<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NAMESPACE);
-
     private final KafkaListenerEndpointRegistry registry;
     private final OffsetConstraint offsetConstraint;
     private final String container;
     private final Service service;
     private final MessageFlags messageFlags;
+    private final Logger logger;
 
     public ErrorConsumer(KafkaListenerEndpointRegistry registry,
                          OffsetConstraint offsetConstraint,
                          @Value("${error_consumer.group_id}") String container,
                          Service service,
-                         MessageFlags messageFlags) {
+                         MessageFlags messageFlags,
+                         Logger logger) {
         this.registry = registry;
         this.offsetConstraint = offsetConstraint;
         this.container = container;
         this.service = service;
         this.messageFlags = messageFlags;
+        this.logger = logger;
     }
 
     /**
@@ -76,7 +74,7 @@ public class ErrorConsumer<T> {
             offsetConstraint.setOffsetConstraint(consumer.endOffsets(Collections.singletonList(new TopicPartition(topic, partition))).values().stream().findFirst().orElse(1L) - 1);
         }
         if (offset > offsetConstraint.getOffsetConstraint()) {
-            LOGGER.info("Maximum offset exceeded; stopping consumer...");
+            logger.info("Maximum offset exceeded; stopping consumer...");
             Optional.ofNullable(this.registry.getListenerContainer(this.container))
                     .ifPresent(MessageListenerContainer::pause);
         } else {

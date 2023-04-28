@@ -8,12 +8,9 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.logging.util.DataMap;
 
 import java.util.Optional;
-
-import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication.NAMESPACE;
 
 /**
  * Logs message details before and after it has been processed by
@@ -31,10 +28,14 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigni
 @Aspect
 public class MessageLoggingAspect {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NAMESPACE);
-
     private static final String LOG_MESSAGE_RECEIVED = "Processing kafka message";
     private static final String LOG_MESSAGE_PROCESSED = "Processed kafka message";
+
+    private final Logger logger;
+
+    public MessageLoggingAspect(Logger logger) {
+        this.logger = logger;
+    }
 
     @Before("execution(* uk.gov.companieshouse.documentsigningrequestconsumer.Consumer.consume(..))")
     void logBeforeMainConsumer(JoinPoint joinPoint) {
@@ -69,6 +70,6 @@ public class MessageLoggingAspect {
                 .offset(offset)
                 .kafkaMessage(incomingMessage.getPayload().toString())
                 .build();
-        LOGGER.debug(logMessage, dataMap.getLogMap());
+        logger.debug(logMessage, dataMap.getLogMap());
     }
 }

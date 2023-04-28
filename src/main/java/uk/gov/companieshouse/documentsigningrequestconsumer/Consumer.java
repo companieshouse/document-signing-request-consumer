@@ -39,8 +39,7 @@ public class Consumer {
             attempts = "${consumer.max_attempts}",
             autoCreateTopics = "false",
             backoff = @Backoff(delayExpression = "${consumer.backoff_delay}"),
-            retryTopicSuffix = "-${consumer.group_id}-retry",
-            dltTopicSuffix = "-${consumer.group_id}-error",
+            dltTopicSuffix = "-error",
             dltStrategy = DltStrategy.FAIL_ON_ERROR,
             fixedDelayTopicStrategy = FixedDelayStrategy.SINGLE_TOPIC,
             include = RetryableException.class

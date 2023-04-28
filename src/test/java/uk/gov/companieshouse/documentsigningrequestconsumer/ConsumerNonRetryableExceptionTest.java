@@ -32,7 +32,7 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAM
 @SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
-        topics = {"echo", "echo-echo-consumer-retry", "echo-echo-consumer-error", "echo-echo-consumer-invalid"},
+        topics = {"echo", "echo-retry", "echo-error", "echo-invalid"},
         controlledShutdown = true,
         partitions = 1
 )
@@ -72,9 +72,9 @@ class ConsumerNonRetryableExceptionTest {
 
         //then
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-retry"), is(0));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-error"), is(0));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-invalid"), is(1));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-retry"), is(0));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-error"), is(0));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-invalid"), is(1));
         verify(service).processMessage(new ServiceParameters(DOCUMENT));
 
     }

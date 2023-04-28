@@ -32,7 +32,7 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAM
 @SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
-        topics = {"echo", "echo-echo-consumer-retry", "echo-echo-consumer-error", "echo-echo-consumer-invalid"},
+        topics = {"echo", "echo-retry", "echo-error", "echo-invalid"},
         controlledShutdown = true,
         partitions = 1
 )
@@ -64,7 +64,7 @@ class ErrorConsumerRetryableExceptionTest {
 
         //when
         testProducer.send(new ProducerRecord<>(
-                "echo-echo-consumer-error", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT));
+                "echo-error", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT));
         if (!latch.await(30L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }
@@ -72,9 +72,9 @@ class ErrorConsumerRetryableExceptionTest {
         //then
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(0));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-retry"), is(1));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-error"), is(1));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-invalid"), is(0));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-retry"), is(1));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-error"), is(1));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-invalid"), is(0));
         verify(service).processMessage(new ServiceParameters(DOCUMENT));
     }
 }

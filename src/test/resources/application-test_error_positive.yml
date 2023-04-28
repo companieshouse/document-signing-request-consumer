@@ -15,13 +15,13 @@ consumer:
   concurrency: 1
 
 error_consumer:
-  topic: echo-echo-consumer-error
+  topic: echo-error
   group_id: echo-error-consumer
   enabled: true
-  dlt: echo-echo-consumer-retry
+  dlt: echo-retry
   concurrency: 1
 
-invalid_message_topic: echo-echo-consumer-invalid
+invalid_message_topic: echo-invalid
 
 logger:
   namespace: archetype-client

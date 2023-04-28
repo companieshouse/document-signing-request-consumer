@@ -25,7 +25,6 @@
         <ch-kafka.version>1.4.8</ch-kafka.version>
         <mockito.version>4.8.0</mockito.version>
         <spring-boot-dependencies.version>2.7.8</spring-boot-dependencies.version>
-        <structured-logging.version>1.9.15</structured-logging.version>
 
         <start-class>uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication</start-class>
         <spring-boot-maven-plugin.version>2.5.5</spring-boot-maven-plugin.version>
@@ -40,7 +39,7 @@
         <log4j.version>2.19.0</log4j.version>
 
         <!-- Structured logging -->
-        <structured-logging.version>1.9.16</structured-logging.version>
+        <structured-logging.version>1.9.19</structured-logging.version>
     </properties>
 
     <dependencyManagement>

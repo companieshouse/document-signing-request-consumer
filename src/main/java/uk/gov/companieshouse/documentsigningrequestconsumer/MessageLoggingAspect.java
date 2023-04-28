@@ -1,8 +1,5 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,6 +9,9 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
+import uk.gov.companieshouse.logging.util.DataMap;
+
+import java.util.Optional;
 
 import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication.NAMESPACE;
 
@@ -57,17 +57,18 @@ public class MessageLoggingAspect {
     }
 
     private void logMessage(String logMessage, Message<?> incomingMessage) {
-        String topic = Optional.ofNullable((String) incomingMessage.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC))
+        var topic = Optional.ofNullable((String) incomingMessage.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC))
                 .orElse("no topic");
-        Integer partition = Optional.ofNullable((Integer) incomingMessage.getHeaders().get(KafkaHeaders.RECEIVED_PARTITION_ID))
+        var partition = Optional.ofNullable((Integer) incomingMessage.getHeaders().get(KafkaHeaders.RECEIVED_PARTITION_ID))
                 .orElse(0);
-        Long offset = Optional.ofNullable((Long) incomingMessage.getHeaders().get(KafkaHeaders.OFFSET))
+        var offset = Optional.ofNullable((Long) incomingMessage.getHeaders().get(KafkaHeaders.OFFSET))
                 .orElse(0L);
-        Map<String, Object> logData = new HashMap<>(Map.of(
-                "topic", topic,
-                "partition", partition,
-                "offset", offset,
-                "kafka message", incomingMessage.getPayload())); // TODO DCAC-75 Structured logging.
-        LOGGER.debug(logMessage, logData);
+        var dataMap = new DataMap.Builder()
+                .topic(topic)
+                .partition(partition)
+                .offset(offset)
+                .kafkaMessage(incomingMessage.getPayload().toString())
+                .build();
+        LOGGER.debug(logMessage, dataMap.getLogMap());
     }
 }

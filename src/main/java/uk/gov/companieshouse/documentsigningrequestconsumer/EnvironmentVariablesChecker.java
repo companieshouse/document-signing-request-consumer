@@ -19,7 +19,7 @@ public class EnvironmentVariablesChecker {
         GROUP_ID("GROUP_ID"),
         INVALID_MESSAGE_TOPIC("INVALID_MESSAGE_TOPIC"),
         MAX_ATTEMPTS("MAX_ATTEMPTS"),
-        SERVER_PORT("SERVER_PORT"),
+        DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT("DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT"),
         TOPIC("TOPIC");
 
         private final String name;

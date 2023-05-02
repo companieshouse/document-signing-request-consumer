@@ -20,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.BACKOFF_DELAY;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.BOOTSTRAP_SERVER_URL;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.CONCURRENT_LISTENER_INSTANCES;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.GROUP_ID;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.INVALID_MESSAGE_TOPIC;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.MAX_ATTEMPTS;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.SERVER_PORT;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.TOPIC;
 
 @SpringBootTest
@@ -91,10 +91,10 @@ class EnvironmentVariablesCheckerTest {
         populateAllVariablesExceptOneAndAssertSomethingMissing(MAX_ATTEMPTS);
     }
 
-    @DisplayName("returns false if SERVER_PORT is missing")
+    @DisplayName("returns false if DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT is missing")
     @Test
-    void checkEnvironmentVariablesAllPresentReturnsFalseIfServerPortMissing() {
-        populateAllVariablesExceptOneAndAssertSomethingMissing(SERVER_PORT);
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfAppPortMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT);
     }
 
     @DisplayName("returns false if TOPIC is missing")

@@ -35,7 +35,7 @@ class DocumentSigningRequestConsumerApplicationTests {
         ENVIRONMENT_VARIABLES = new EnvironmentVariables();
         stream(EnvironmentVariablesChecker.RequiredEnvironmentVariables.values()).forEach(variable -> {
                 switch (variable) {
-                    case SERVER_PORT:
+                    case DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT:
                         ENVIRONMENT_VARIABLES.set(variable.getName(), "8080");
                         break;
                     default:

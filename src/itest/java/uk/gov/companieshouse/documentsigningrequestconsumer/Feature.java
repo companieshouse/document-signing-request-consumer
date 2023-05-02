@@ -24,7 +24,7 @@ public class Feature {
 
     @When("the user performs a healthcheck")
     public void performLivenessCheck() throws Exception {
-        resultActions = mockMvc.perform(get("/document-signing-request-consumer/healthcheck"));
+        resultActions = mockMvc.perform(get("/healthcheck"));
     }
 
     @Then("the response code should be {int}")

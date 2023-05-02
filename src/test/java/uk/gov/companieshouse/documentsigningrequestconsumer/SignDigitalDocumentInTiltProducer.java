@@ -19,11 +19,10 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAM
  * "Test" class re-purposed to produce {@link SignDigitalDocument} messages to the <code>sign-digital-document</code>
  * topic in Tilt. This is NOT to be run as part of an automated test suite. It is for manual testing only.
  */
-@SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class)
+@SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class,
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@TestPropertySource(properties = {
-        "server.port=8080",
-        "steps=1"})
+@TestPropertySource(properties = "steps=1")
 @Import(TestConfig.class)
 @SuppressWarnings("squid:S3577") // This is NOT to be run as part of an automated test suite.
 class SignDigitalDocumentInTiltProducer {
@@ -39,14 +38,9 @@ class SignDigitalDocumentInTiltProducer {
         ENVIRONMENT_VARIABLES.set("BACKOFF_DELAY", "100");
         ENVIRONMENT_VARIABLES.set("BOOTSTRAP_SERVER_URL", KAFKA_IN_TILT_BOOTSTRAP_SERVER_URL);
         ENVIRONMENT_VARIABLES.set("CONCURRENT_LISTENER_INSTANCES", "1");
-        ENVIRONMENT_VARIABLES.set("CONCURRENT_ERROR_LISTENER_INSTANCES", "1");
         ENVIRONMENT_VARIABLES.set("TOPIC", "sign-digital-document");
-        ENVIRONMENT_VARIABLES.set("RETRY_TOPIC", "document-signing-request-retry");
-        ENVIRONMENT_VARIABLES.set("ERROR_TOPIC", "document-signing-request-error");
         ENVIRONMENT_VARIABLES.set("INVALID_MESSAGE_TOPIC", "sign-digital-document-invalid");
-        ENVIRONMENT_VARIABLES.set("ERROR_GROUP_ID", "document-signing-request-error-consumer");
         ENVIRONMENT_VARIABLES.set("GROUP_ID","document-signing-request-consumer");
-        ENVIRONMENT_VARIABLES.set("IS_ERROR_CONSUMER", "false");
     }
 
     @Autowired

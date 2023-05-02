@@ -22,8 +22,4 @@ public class ConsumerAspect {
         latch.countDown();
     }
 
-    @After("execution(* uk.gov.companieshouse.documentsigningrequestconsumer.ErrorConsumer.consume(..))")
-    void afterErrorConsume(JoinPoint joinPoint) {
-        latch.countDown();
-    }
 }

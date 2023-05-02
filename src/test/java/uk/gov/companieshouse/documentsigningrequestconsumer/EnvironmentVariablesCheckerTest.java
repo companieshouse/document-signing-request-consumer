@@ -19,15 +19,10 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.BACKOFF_DELAY;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.BOOTSTRAP_SERVER_URL;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.CONCURRENT_ERROR_LISTENER_INSTANCES;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.CONCURRENT_LISTENER_INSTANCES;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.ERROR_GROUP_ID;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.ERROR_TOPIC;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.GROUP_ID;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.INVALID_MESSAGE_TOPIC;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.IS_ERROR_CONSUMER;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.MAX_ATTEMPTS;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.RETRY_TOPIC;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.SERVER_PORT;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.TOPIC;
 
@@ -78,24 +73,6 @@ class EnvironmentVariablesCheckerTest {
         populateAllVariablesExceptOneAndAssertSomethingMissing(CONCURRENT_LISTENER_INSTANCES);
     }
 
-    @DisplayName("returns false if CONCURRENT_ERROR_LISTENER_INSTANCES is missing")
-    @Test
-    void checkEnvironmentVariablesAllPresentReturnsFalseIfConcurrentErrorListenerInstancesMissing() {
-        populateAllVariablesExceptOneAndAssertSomethingMissing(CONCURRENT_ERROR_LISTENER_INSTANCES);
-    }
-
-    @DisplayName("returns false if ERROR_GROUP_ID is missing")
-    @Test
-    void checkEnvironmentVariablesAllPresentReturnsFalseIfErrorGroupIdMissing() {
-        populateAllVariablesExceptOneAndAssertSomethingMissing(ERROR_GROUP_ID);
-    }
-
-    @DisplayName("returns false if ERROR_TOPIC is missing")
-    @Test
-    void checkEnvironmentVariablesAllPresentReturnsFalseIfErrorTopicMissing() {
-        populateAllVariablesExceptOneAndAssertSomethingMissing(ERROR_TOPIC);
-    }
-
     @DisplayName("returns false if GROUP_ID is missing")
     @Test
     void checkEnvironmentVariablesAllPresentReturnsFalseIfGroupIdMissing() {
@@ -108,22 +85,10 @@ class EnvironmentVariablesCheckerTest {
         populateAllVariablesExceptOneAndAssertSomethingMissing(INVALID_MESSAGE_TOPIC);
     }
 
-    @DisplayName("returns false if IS_ERROR_CONSUMER is missing")
-    @Test
-    void checkEnvironmentVariablesAllPresentReturnsFalseIfIsErrorConsumerMissing() {
-        populateAllVariablesExceptOneAndAssertSomethingMissing(IS_ERROR_CONSUMER);
-    }
-
     @DisplayName("returns false if MAX_ATTEMPTS is missing")
     @Test
     void checkEnvironmentVariablesAllPresentReturnsFalseIfMaxAttemptsMissing() {
         populateAllVariablesExceptOneAndAssertSomethingMissing(MAX_ATTEMPTS);
-    }
-
-    @DisplayName("returns false if RETRY_TOPIC is missing")
-    @Test
-    void checkEnvironmentVariablesAllPresentReturnsFalseIfRetryTopicMissing() {
-        populateAllVariablesExceptOneAndAssertSomethingMissing(RETRY_TOPIC);
     }
 
     @DisplayName("returns false if SERVER_PORT is missing")

@@ -27,10 +27,12 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, SignDig
 
     @Override
     public void onAcknowledgement(RecordMetadata metadata, Exception exception) {
+        // Method must be implemented, but no intervention is required here.
     }
 
     @Override
     public void close() {
+        // Method must be implemented, but no intervention is required here.
     }
 
     @Override

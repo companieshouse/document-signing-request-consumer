@@ -22,6 +22,7 @@ import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
+import uk.gov.companieshouse.logging.util.DataMap;
 
 import java.util.Map;
 
@@ -47,6 +48,9 @@ public class Config {
     }
 
     @Bean
+    // In the unlikely event that a SerializationException should occur, the RuntimeException used to wrap
+    // it is swallowed by spring/spring-kafka to which our exception types would be meaningless.
+    @SuppressWarnings("squid:S112")
     public ProducerFactory<String, SignDigitalDocument> producerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
             MessageFlags messageFlags,
             @Value("${invalid_message_topic}") String invalidMessageTopic) {
@@ -60,10 +64,17 @@ public class Config {
                         "message.flags", messageFlags,
                         "invalid.message.topic", invalidMessageTopic),
                 new StringSerializer(),
-                (topic, data) -> {
+        (topic, data) -> {
                     try {
-                        return new SerializerFactory().getSpecificRecordSerializer(SignDigitalDocument.class).toBinary(data); //creates a leading space
+                        return new SerializerFactory().getSpecificRecordSerializer(SignDigitalDocument.class)
+                                .toBinary(data); //creates a leading space
                     } catch (SerializationException e) {
+                        var dataMap = new DataMap.Builder()
+                                .topic(topic)
+                                .kafkaMessage(data.toString())
+                                .build();
+                        getLogger().error("Caught SerializationException serializing kafka message.",
+                                dataMap.getLogMap());
                         throw new RuntimeException(e);
                     }
                 });

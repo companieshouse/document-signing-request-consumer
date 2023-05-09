@@ -13,7 +13,7 @@ import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
 @Component
 class DocumentSigningService implements Service {
 
-    private ApiClientService apiClientService;
+    private final ApiClientService apiClientService;
 
     private static final String SIGN_PDF_URI = "/document-signing/sign-pdf";
 
@@ -24,9 +24,17 @@ class DocumentSigningService implements Service {
     @Override
     public void processMessage(ServiceParameters parameters) {
         SignPDFApi requestBody = new SignPDFApi();
+        final String itemGroup = parameters.getData().get("item_group").toString();
+        final String orderNumber = parameters.getData().get("order_number").toString();
 
-        // I assume we will access the data like the following
-        //requestBody.setDocumentLocation(parameters.getData().get("id").toString());
+        requestBody.setDocumentLocation(parameters.getData().get("private_s3_location").toString());
+        requestBody.setDocumentType(parameters.getData().get("document_type").toString());
+
+//        TODO Currently undefined where these will come from
+          requestBody.setKey("application-pdf");
+          requestBody.setPrefix("cidev/certified-copy");
+//          requestBody.setCoverSheetData("");
+//        requestBody.setCoverSheetData();
 
         SignPDFResponseApi signPDFResponseApi;
 

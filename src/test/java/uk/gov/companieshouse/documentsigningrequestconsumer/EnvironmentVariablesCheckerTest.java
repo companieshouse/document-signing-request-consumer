@@ -24,6 +24,7 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVa
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.GROUP_ID;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.INVALID_MESSAGE_TOPIC;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.MAX_ATTEMPTS;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.PREFIX;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.TOPIC;
 
 @SpringBootTest
@@ -103,6 +104,12 @@ class EnvironmentVariablesCheckerTest {
         populateAllVariablesExceptOneAndAssertSomethingMissing(TOPIC);
     }
 
+
+    @DisplayName("returns false if PREFIX is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfPrefixMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(PREFIX);
+    }
     private void populateAllVariablesExceptOneAndAssertSomethingMissing(
             final EnvironmentVariablesChecker.RequiredEnvironmentVariables excludedVariable) {
         stream(EnvironmentVariablesChecker.RequiredEnvironmentVariables.values()).forEach(variable -> {

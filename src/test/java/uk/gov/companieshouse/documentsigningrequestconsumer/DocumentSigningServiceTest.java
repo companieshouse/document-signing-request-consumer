@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.env.Environment;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.documentsigning.PrivateDocumentSigningResourceHandler;
@@ -16,6 +17,7 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,6 +37,9 @@ public class DocumentSigningServiceTest {
 
     @Mock
     private Logger logger;
+
+    @Mock
+    EnvironmentReader environmentReader;
 
     @Mock
     private InternalApiClient internalApiClient;
@@ -66,6 +71,7 @@ public class DocumentSigningServiceTest {
 
     @BeforeEach
     void init() {
+        when(environmentReader.getMandatoryString(anyString())).thenReturn("test/certified-copy");
         when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateDocumentSigningResourceHandler()).thenReturn(privateDocumentSigningResourceHandler);
         when(privateDocumentSigningResourceHandler.signPDF(anyString(), any(SignPDFApi.class))).thenReturn(privateSignPDF);

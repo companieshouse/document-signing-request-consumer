@@ -7,6 +7,7 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.documentsigning.CoverSheetDataApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
+import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.DataMap;
 
@@ -19,15 +20,10 @@ import java.util.Map;
  */
 @Component
 class DocumentSigningService implements Service {
-
-    private final ApiClientService apiClientService;
-
-    private final Logger logger;
-
     private static final String SIGN_PDF_URI = "/document-signing/sign-pdf";
     private static final String COVERSHEET_OPTION = "cover-sheet";
     private static final String APPLICATION_PDF = "application-pdf";
-    private static final String PREFIX = "cidev/certified-copy";
+    private static final String PREFIX_ENV_VARIABLE = "PREFIX";
 
     // Kafka Message Keys
     private static final String ORDER_ID = "order_number";
@@ -39,9 +35,16 @@ class DocumentSigningService implements Service {
     private static final String FILING_HISTORY_TYPE = "filing_history_type";
     private static final String FILING_HISTORY_DESCRIPTION = "filing_history_description";
 
-    public DocumentSigningService(ApiClientService apiClientService, Logger logger) {
+    private final ApiClientService apiClientService;
+    private final Logger logger;
+    private final EnvironmentReader environmentReader;
+
+    public DocumentSigningService(ApiClientService apiClientService,
+                                  Logger logger,
+                                  EnvironmentReader environmentReader) {
         this.apiClientService = apiClientService;
         this.logger = logger;
+        this.environmentReader = environmentReader;
     }
 
     @Override
@@ -77,8 +80,7 @@ class DocumentSigningService implements Service {
         requestBody.setDocumentLocation(parameters.getData().get(PRIVATE_S3_LOCATION).toString());
         requestBody.setDocumentType(parameters.getData().get(DOCUMENT_TYPE).toString());
         requestBody.setKey(APPLICATION_PDF);
-
-        requestBody.setPrefix(PREFIX);
+        requestBody.setPrefix(environmentReader.getMandatoryString(PREFIX_ENV_VARIABLE));
 
         List<String> signatureOptions = new ArrayList<>();
         signatureOptions.add(COVERSHEET_OPTION);

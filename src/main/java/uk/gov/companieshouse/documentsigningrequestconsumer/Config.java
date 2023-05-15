@@ -18,6 +18,8 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+import uk.gov.companieshouse.environment.EnvironmentReader;
+import uk.gov.companieshouse.environment.impl.EnvironmentReaderImpl;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.logging.Logger;
@@ -98,5 +100,10 @@ public class Config {
     @Bean
     Logger getLogger() {
         return LoggerFactory.getLogger(NAMESPACE);
+    }
+
+    @Bean
+    EnvironmentReader environmentReader() {
+        return new EnvironmentReaderImpl();
     }
 }

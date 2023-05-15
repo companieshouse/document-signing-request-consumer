@@ -27,6 +27,7 @@ class DocumentSigningService implements Service {
     private static final String SIGN_PDF_URI = "/document-signing/sign-pdf";
     private static final String COVERSHEET_OPTION = "cover-sheet";
     private static final String APPLICATION_PDF = "application-pdf";
+    private static final String PREFIX = "cidev/certified-copy";
 
     // Kafka Message Keys
     private static final String ORDER_ID = "order_number";
@@ -45,6 +46,10 @@ class DocumentSigningService implements Service {
 
     @Override
     public void processMessage(ServiceParameters parameters) {
+        final String orderId = parameters.getData().get(ORDER_ID).toString();
+        final String itemGroupId = parameters.getData().get(ITEM_GROUP).toString();
+
+        logger.info("Mapping parameters for document sign request request", getLogMap(orderId, itemGroupId));
 
         SignPDFApi requestBody = mapMessageToRequest(parameters, logger);
 
@@ -54,25 +59,26 @@ class DocumentSigningService implements Service {
                             .signPDF(SIGN_PDF_URI, requestBody)
                             .execute();
 
+            logger.info("API returned response: "+ response.getStatusCode(), getLogMap(orderId, itemGroupId));
+
             //TODO Use response to populate satisfy item request
 
-        } catch (ApiErrorResponseException | URIValidationException e) {
-            throw new RuntimeException(e);
+        } catch (ApiErrorResponseException e) {
+            logger.error("Failed to get response from Document Signing API", getLogMap(orderId, itemGroupId));
+            throw new RetryableException("Attempting retry due to failed response", e);
+        } catch (URIValidationException e) {
+            logger.error("Error with URI", getLogMap(orderId, itemGroupId));
+            throw new RetryableException("Attempting retry due to URI validation error", e);
         }
     }
 
     private SignPDFApi mapMessageToRequest(ServiceParameters parameters, Logger logger) {
-        final String orderId = parameters.getData().get(ORDER_ID).toString();
-        final String itemGroupId = parameters.getData().get(ITEM_GROUP).toString();
-
-        logger.info("Mapping parameters to request for order: " +  orderId +" item group: " + itemGroupId,
-            getLogMap(orderId, itemGroupId));
-
         SignPDFApi requestBody = new SignPDFApi();
         requestBody.setDocumentLocation(parameters.getData().get(PRIVATE_S3_LOCATION).toString());
         requestBody.setDocumentType(parameters.getData().get(DOCUMENT_TYPE).toString());
         requestBody.setKey(APPLICATION_PDF);
-        requestBody.setPrefix("cidev/certified-copy");
+
+        requestBody.setPrefix(PREFIX);
 
         List<String> signatureOptions = new ArrayList<>();
         signatureOptions.add(COVERSHEET_OPTION);

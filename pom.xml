@@ -22,7 +22,7 @@
         <cucumber.version>7.8.1</cucumber.version>
         <environment-reader-library.version>1.3.8</environment-reader-library.version>
         <junit.version>5.9.1</junit.version>
-        <kafka-models.version>1.0.31</kafka-models.version>
+        <kafka-models.version>1.0.32</kafka-models.version>
         <ch-kafka.version>1.4.8</ch-kafka.version>
         <mockito.version>4.8.0</mockito.version>
         <spring-boot-dependencies.version>2.7.8</spring-boot-dependencies.version>
@@ -42,7 +42,7 @@
         <log4j.version>2.19.0</log4j.version>
 
         <!-- Structured logging -->
-        <structured-logging.version>1.9.19</structured-logging.version>
+        <structured-logging.version>1.9.21</structured-logging.version>
     </properties>
 
     <dependencyManagement>

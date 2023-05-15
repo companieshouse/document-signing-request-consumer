@@ -1,11 +1,18 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.api.model.ApiResponse;
+import uk.gov.companieshouse.api.model.documentsigning.CoverSheetDataApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.util.DataMap;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Makes sign PDF requests to the Document Signing API.
@@ -15,36 +22,77 @@ class DocumentSigningService implements Service {
 
     private final ApiClientService apiClientService;
 
-    private static final String SIGN_PDF_URI = "/document-signing/sign-pdf";
+    private final Logger logger;
 
-    public DocumentSigningService(ApiClientService apiClientService) {
+    private static final String SIGN_PDF_URI = "/document-signing/sign-pdf";
+    private static final String COVERSHEET_OPTION = "cover-sheet";
+    private static final String APPLICATION_PDF = "application-pdf";
+
+    // Kafka Message Keys
+    private static final String ORDER_ID = "order_number";
+    private static final String ITEM_GROUP = "item_group";
+    private static final String PRIVATE_S3_LOCATION = "private_s3_location";
+    private static final String DOCUMENT_TYPE = "document_type";
+    private static final String COMPANY_NAME = "company_name";
+    private static final String COMPANY_NUMBER = "company_number";
+    private static final String FILING_HISTORY_TYPE = "filing_history_type";
+    private static final String FILING_HISTORY_DESCRIPTION = "filing_history_description";
+
+    public DocumentSigningService(ApiClientService apiClientService, Logger logger) {
         this.apiClientService = apiClientService;
+        this.logger = logger;
     }
 
     @Override
     public void processMessage(ServiceParameters parameters) {
-        SignPDFApi requestBody = new SignPDFApi();
-        final String itemGroup = parameters.getData().get("item_group").toString();
-        final String orderNumber = parameters.getData().get("order_number").toString();
 
-        requestBody.setDocumentLocation(parameters.getData().get("private_s3_location").toString());
-        requestBody.setDocumentType(parameters.getData().get("document_type").toString());
-
-//        TODO Currently undefined where these will come from
-          requestBody.setKey("application-pdf");
-          requestBody.setPrefix("cidev/certified-copy");
-//          requestBody.setCoverSheetData("");
-//        requestBody.setCoverSheetData();
-
-        SignPDFResponseApi signPDFResponseApi;
+        SignPDFApi requestBody = mapMessageToRequest(parameters, logger);
 
         try {
-            signPDFResponseApi = apiClientService.getInternalApiClient()
+            ApiResponse<SignPDFResponseApi> response = apiClientService.getInternalApiClient()
                             .privateDocumentSigningResourceHandler()
                             .signPDF(SIGN_PDF_URI, requestBody)
-                            .execute().getData();
+                            .execute();
+
+            //TODO Use response to populate satisfy item request
+
         } catch (ApiErrorResponseException | URIValidationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private SignPDFApi mapMessageToRequest(ServiceParameters parameters, Logger logger) {
+        final String orderId = parameters.getData().get(ORDER_ID).toString();
+        final String itemGroupId = parameters.getData().get(ITEM_GROUP).toString();
+
+        logger.info("Mapping parameters to request for order: " +  orderId +" item group: " + itemGroupId,
+            getLogMap(orderId, itemGroupId));
+
+        SignPDFApi requestBody = new SignPDFApi();
+        requestBody.setDocumentLocation(parameters.getData().get(PRIVATE_S3_LOCATION).toString());
+        requestBody.setDocumentType(parameters.getData().get(DOCUMENT_TYPE).toString());
+        requestBody.setKey(APPLICATION_PDF);
+        requestBody.setPrefix("cidev/certified-copy");
+
+        List<String> signatureOptions = new ArrayList<>();
+        signatureOptions.add(COVERSHEET_OPTION);
+        requestBody.setSignatureOptions(signatureOptions);
+
+        CoverSheetDataApi coverSheetDataApi = new CoverSheetDataApi();
+        coverSheetDataApi.setCompanyName(parameters.getData().get(COMPANY_NAME).toString());
+        coverSheetDataApi.setCompanyNumber(parameters.getData().get(COMPANY_NUMBER).toString());
+        coverSheetDataApi.setFilingHistoryType(parameters.getData().get(FILING_HISTORY_TYPE).toString());
+        coverSheetDataApi.setFilingHistoryDescription(parameters.getData().get(FILING_HISTORY_DESCRIPTION).toString());
+        requestBody.setCoverSheetData(coverSheetDataApi);
+
+        return requestBody;
+    }
+
+    private Map<String, Object> getLogMap(final String orderId, String itemGroupId) {
+        return new DataMap.Builder()
+            .orderId(orderId)
+            .itemGroupId(itemGroupId)
+            .build()
+            .getLogMap();
     }
 }

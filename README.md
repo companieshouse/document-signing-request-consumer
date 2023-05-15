@@ -15,6 +15,7 @@ The following environment variables are all **mandatory**.
 | MAX_ATTEMPTS                           | number | The maximum number of times messages will be processed before they are sent to the dead letter topic.                        | 4                                 | env var  |
 | TOPIC                                  | string | The topic from which the main consumer will consume messages.                                                                | sign-digital-document             | env var  |
 | INVALID_MESSAGE_TOPIC                  | string | The topic to which consumers will republish messages if any unchecked exception other than RetryableException is thrown.     | sign-digital-document-invalid     | env var  |
+| PREFIX                                 | string | The location in which the signed document will be stored                                                                     | location/certified-document       | env var  |
 
 ## Endpoints
 

@@ -47,6 +47,11 @@ class DocumentSigningService implements Service {
         this.environmentReader = environmentReader;
     }
 
+    /**
+     * Extract the message to build request to sign document
+     * @param parameters the fields present with the message
+     * @throws RetryableException to attempt retry if something fails
+     */
     @Override
     public void processMessage(ServiceParameters parameters) {
         final String orderId = parameters.getData().get(ORDER_ID).toString();
@@ -54,7 +59,7 @@ class DocumentSigningService implements Service {
 
         logger.info("Mapping parameters for document sign request request", getLogMap(orderId, itemGroupId));
 
-        SignPDFApi requestBody = mapMessageToRequest(parameters, logger);
+        SignPDFApi requestBody = mapMessageToRequest(parameters);
 
         try {
             ApiResponse<SignPDFResponseApi> response = apiClientService.getInternalApiClient()
@@ -75,7 +80,12 @@ class DocumentSigningService implements Service {
         }
     }
 
-    private SignPDFApi mapMessageToRequest(ServiceParameters parameters, Logger logger) {
+    /**
+     * Maps the message data to a request
+     * @param parameters the fields present with the message
+     * @return the {@link SignPDFApi} data to send in request
+     */
+    private SignPDFApi mapMessageToRequest(ServiceParameters parameters) {
         SignPDFApi requestBody = new SignPDFApi();
         requestBody.setDocumentLocation(parameters.getData().get(PRIVATE_S3_LOCATION).toString());
         requestBody.setDocumentType(parameters.getData().get(DOCUMENT_TYPE).toString());

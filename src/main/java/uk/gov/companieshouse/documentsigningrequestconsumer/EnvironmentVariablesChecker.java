@@ -20,7 +20,8 @@ public class EnvironmentVariablesChecker {
         INVALID_MESSAGE_TOPIC("INVALID_MESSAGE_TOPIC"),
         MAX_ATTEMPTS("MAX_ATTEMPTS"),
         DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT("DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT"),
-        TOPIC("TOPIC");
+        TOPIC("TOPIC"),
+        PREFIX("PREFIX");
 
         private final String name;
 

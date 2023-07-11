@@ -75,7 +75,7 @@ class DocumentSigningService implements Service {
             //TODO Use response to populate satisfy item request
 
         } catch (ApiErrorResponseException e) {
-            logger.error("Failed to get response from Document Signing API: " + e, getLogMap(orderId, itemGroupId, e));
+            logger.error("Got error response from Document Signing API: " + e, getLogMap(orderId, itemGroupId, e));
             throw new RetryableException("Attempting retry due to failed response", e);
         } catch (URIValidationException e) {
             logger.error("Error with URI: " + e, getLogMap(orderId, itemGroupId, e));

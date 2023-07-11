@@ -8,12 +8,15 @@ import uk.gov.companieshouse.api.model.documentsigning.CoverSheetDataApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
 import uk.gov.companieshouse.environment.EnvironmentReader;
+import uk.gov.companieshouse.environment.exception.EnvironmentVariableException;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.DataMap;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Makes sign PDF requests to the Document Signing API.
@@ -72,11 +75,15 @@ class DocumentSigningService implements Service {
             //TODO Use response to populate satisfy item request
 
         } catch (ApiErrorResponseException e) {
-            logger.error("Failed to get response from Document Signing API", getLogMap(orderId, itemGroupId));
+            logger.error("Failed to get response from Document Signing API: " + e, getLogMap(orderId, itemGroupId, e));
             throw new RetryableException("Attempting retry due to failed response", e);
         } catch (URIValidationException e) {
-            logger.error("Error with URI", getLogMap(orderId, itemGroupId));
+            logger.error("Error with URI: " + e, getLogMap(orderId, itemGroupId, e));
             throw new RetryableException("Attempting retry due to URI validation error", e);
+        } catch (EnvironmentVariableException eve) {
+            logger.error("Error trying to send signPdf request to Document Signing API: "
+                    + eve, getLogMap(orderId, itemGroupId, eve));
+            throw new NonRetryableException("Unable to send signPdf request to Document Signing API", eve);
         }
     }
 
@@ -106,11 +113,20 @@ class DocumentSigningService implements Service {
         return requestBody;
     }
 
-    private Map<String, Object> getLogMap(final String orderId, String itemGroupId) {
+    private Map<String, Object> getLogMap(final String orderId, final String itemGroupId, final Exception exception) {
         return new DataMap.Builder()
             .orderId(orderId)
             .itemGroupId(itemGroupId)
+            .errors(singletonList(exception.getMessage()))
             .build()
             .getLogMap();
+    }
+
+    private Map<String, Object> getLogMap(final String orderId, final String itemGroupId) {
+        return new DataMap.Builder()
+                .orderId(orderId)
+                .itemGroupId(itemGroupId)
+                .build()
+                .getLogMap();
     }
 }

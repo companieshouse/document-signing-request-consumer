@@ -4,12 +4,13 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
-import java.io.IOException;
-
 @Component
 public class ApiClientService {
 
     public InternalApiClient getInternalApiClient() {
-        return ApiSdkManager.getPrivateSDK();
+        final var client = ApiSdkManager.getPrivateSDK();
+        // TODO DCAC-151 Replace this Tilt-specific override with an environment variable.
+        client.setInternalBasePath(client.getBasePath());
+        return client;
     }
 }

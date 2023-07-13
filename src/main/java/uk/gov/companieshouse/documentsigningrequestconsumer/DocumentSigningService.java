@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
@@ -8,7 +9,6 @@ import uk.gov.companieshouse.api.model.documentsigning.CoverSheetDataApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
 import uk.gov.companieshouse.environment.EnvironmentReader;
-import uk.gov.companieshouse.environment.exception.EnvironmentVariableException;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.DataMap;
 
@@ -80,10 +80,11 @@ class DocumentSigningService implements Service {
         } catch (URIValidationException e) {
             logger.error("Error with URI: " + e, getLogMap(orderId, itemGroupId, e));
             throw new RetryableException("Attempting retry due to URI validation error", e);
-        } catch (EnvironmentVariableException eve) {
+        } catch (Exception exception) {
+            final var rootCause = getRootCause(exception);
             logger.error("Error trying to send signPdf request to Document Signing API: "
-                    + eve, getLogMap(orderId, itemGroupId, eve));
-            throw new NonRetryableException("Unable to send signPdf request to Document Signing API", eve);
+                    + rootCause, getLogMap(orderId, itemGroupId, rootCause));
+            throw new NonRetryableException("Unable to send signPdf request to Document Signing API", rootCause);
         }
     }
 
@@ -113,11 +114,11 @@ class DocumentSigningService implements Service {
         return requestBody;
     }
 
-    private Map<String, Object> getLogMap(final String orderId, final String itemGroupId, final Exception exception) {
+    private Map<String, Object> getLogMap(final String orderId, final String itemGroupId, final Throwable rootCause) {
         return new DataMap.Builder()
             .orderId(orderId)
             .itemGroupId(itemGroupId)
-            .errors(singletonList(exception.getMessage()))
+            .errors(singletonList(rootCause.getMessage()))
             .build()
             .getLogMap();
     }
@@ -128,5 +129,10 @@ class DocumentSigningService implements Service {
                 .itemGroupId(itemGroupId)
                 .build()
                 .getLogMap();
+    }
+
+    private Throwable getRootCause(final Exception exception) {
+        final var rootCause = ExceptionUtils.getRootCause(exception);
+        return rootCause != null ? rootCause : exception;
     }
 }

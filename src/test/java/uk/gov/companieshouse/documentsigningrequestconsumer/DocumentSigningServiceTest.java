@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.env.Environment;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.documentsigning.PrivateDocumentSigningResourceHandler;
@@ -18,6 +17,7 @@ import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.environment.EnvironmentReader;
+import uk.gov.companieshouse.environment.exception.EnvironmentVariableException;
 import uk.gov.companieshouse.logging.Logger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class DocumentSigningServiceTest {
+class DocumentSigningServiceTest {
 
     @Mock
     private ApiClientService apiClientService;
@@ -55,8 +55,6 @@ public class DocumentSigningServiceTest {
 
     @InjectMocks
     private DocumentSigningService documentSigningService;
-
-    private static final String SIGN_PDF_URI = "/document-signing/sign-pdf";
 
     private static final SignDigitalDocument DATA = new SignDigitalDocument(
         "location",
@@ -114,5 +112,18 @@ public class DocumentSigningServiceTest {
 
         assertThat(exception.getMessage(),
             is("Attempting retry due to URI validation error"));
+    }
+
+    @Test
+    @DisplayName("Test process message throws NonRetryableException when EnvironmentVariableException caught")
+    void processMessageThrowsNonRetryableExceptionWithEnvironmentVariableException() throws Exception {
+        final ServiceParameters parameters = new ServiceParameters(DATA);
+
+        when(privateSignPDF.execute()).thenThrow(EnvironmentVariableException.class);
+        final NonRetryableException exception = assertThrows(NonRetryableException.class,
+                () -> documentSigningService.processMessage(parameters));
+
+        assertThat(exception.getMessage(),
+                is("Unable to send signPdf request to Document Signing API"));
     }
 }

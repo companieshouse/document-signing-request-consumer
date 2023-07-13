@@ -8,7 +8,11 @@ import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 @Component
 public class ApiClientService {
 
-    @Value("${internal.api.url}") String internalApiUrl;
+    private final String internalApiUrl;
+
+    public ApiClientService(@Value("${internal.api.url}") String internalApiUrl) {
+        this.internalApiUrl = internalApiUrl;
+    }
 
     public InternalApiClient getInternalApiClient() {
         final var client = ApiSdkManager.getPrivateSDK();

@@ -21,7 +21,11 @@ public class EnvironmentVariablesChecker {
         MAX_ATTEMPTS("MAX_ATTEMPTS"),
         DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT("DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT"),
         TOPIC("TOPIC"),
-        PREFIX("PREFIX");
+        PREFIX("PREFIX"),
+        API_URL("API_URL"),
+        PAYMENTS_API_URL("PAYMENTS_API_URL"),
+        CHS_API_KEY("CHS_API_KEY"),
+        INTERNAL_API_URL("INTERNAL_API_URL");
 
         private final String name;
 

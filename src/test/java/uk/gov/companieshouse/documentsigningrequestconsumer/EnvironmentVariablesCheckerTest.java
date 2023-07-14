@@ -19,13 +19,17 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.BACKOFF_DELAY;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.BOOTSTRAP_SERVER_URL;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.CHS_API_KEY;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.CONCURRENT_LISTENER_INSTANCES;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.GROUP_ID;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.INTERNAL_API_URL;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.INVALID_MESSAGE_TOPIC;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.MAX_ATTEMPTS;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.PAYMENTS_API_URL;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.PREFIX;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.TOPIC;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVariablesChecker.RequiredEnvironmentVariables.API_URL;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test_main_positive.yml")
@@ -104,6 +108,29 @@ class EnvironmentVariablesCheckerTest {
         populateAllVariablesExceptOneAndAssertSomethingMissing(TOPIC);
     }
 
+    @DisplayName("returns false if API_URL is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfApiUrlMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(API_URL);
+    }
+
+    @DisplayName("returns false if PAYMENTS_API_URL is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfPaymentsApiUrlMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(PAYMENTS_API_URL);
+    }
+
+    @DisplayName("returns false if CHS_API_KEY is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfChsApiKeyMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(CHS_API_KEY);
+    }
+
+    @DisplayName("returns false if INTERNAL_API_URL is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfInternalApiUrlMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(INTERNAL_API_URL);
+    }
 
     @DisplayName("returns false if PREFIX is missing")
     @Test

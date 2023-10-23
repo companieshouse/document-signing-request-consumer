@@ -6,7 +6,6 @@ import uk.gov.companieshouse.documentsigning.CoverSheetDataRecord;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Constants {
 
     private Constants() {
@@ -20,8 +19,8 @@ public class Constants {
             .build();
 
     public static final Map<String, String> FILING_HISTORY_DESCRIPTION_VALUES  = new HashMap<String, String>() {{
-        put("testKey1", "testValue1");
-        put("testKey2", "testValue2");
+            put("testKey1", "testValue1");
+            put("testKey2", "testValue2");
     }};
 
     public static final SignDigitalDocument DOCUMENT = SignDigitalDocument.newBuilder()

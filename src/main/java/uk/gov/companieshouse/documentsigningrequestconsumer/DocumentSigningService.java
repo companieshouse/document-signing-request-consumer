@@ -37,7 +37,6 @@ class DocumentSigningService implements Service {
     private static final String COMPANY_NUMBER = "company_number";
     private static final String TYPE = "type";
     private static final String DESCRIPTION = "description";
-
     private static final String FILING_HISTORY_DESCRIPTION_VALUES = "filing_history_description_values";
 
     private final ApiClientService apiClientService;
@@ -103,7 +102,6 @@ class DocumentSigningService implements Service {
         List<String> signatureOptions = new ArrayList<>();
         signatureOptions.add(COVERSHEET_OPTION);
         requestBody.setSignatureOptions(signatureOptions);
-
         requestBody.setPrefix(environmentReader.getMandatoryString(PREFIX_ENV_VARIABLE));
         requestBody.setKey(APPLICATION_PDF);
 

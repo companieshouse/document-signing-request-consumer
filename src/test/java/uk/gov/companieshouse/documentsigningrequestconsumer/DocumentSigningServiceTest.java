@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,9 +17,12 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+import uk.gov.companieshouse.documentsigning.CoverSheetDataRecord;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.environment.exception.EnvironmentVariableException;
 import uk.gov.companieshouse.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -56,15 +60,26 @@ class DocumentSigningServiceTest {
     @InjectMocks
     private DocumentSigningService documentSigningService;
 
-    private static final SignDigitalDocument DATA = new SignDigitalDocument(
-        "location",
+    public static final Map<String, String> FILING_HISTORY_DESCRIPTION_VALUES  = new HashMap<String, String>() {{
+        put("testKey1", "testValue1");
+        put("testKey2", "testValue2");
+    }};
+
+    private static final CoverSheetDataRecord COVER_SHEET_DATA_RECORD = new CoverSheetDataRecord(
+            "companyName",
+            "companyNumber",
+            "description",
+            "type"
+    );
+
+    private final SignDigitalDocument DATA = new SignDigitalDocument(
+         COVER_SHEET_DATA_RECORD,
+        "privateS3Location",
         "documentType",
-        "itemGroup",
-        "orderNum",
-        "companyName",
-        "companyNumber",
-        "filingHistoryDescription",
-        "filingHistoryType"
+        "groupItem",
+        "orderNumber",
+         FILING_HISTORY_DESCRIPTION_VALUES
+
     );
 
     @BeforeEach

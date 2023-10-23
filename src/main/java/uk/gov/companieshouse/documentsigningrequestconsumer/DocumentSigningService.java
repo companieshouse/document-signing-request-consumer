@@ -30,13 +30,15 @@ class DocumentSigningService implements Service {
 
     // Kafka Message Keys
     private static final String ORDER_ID = "order_number";
-    private static final String ITEM_GROUP = "item_group";
+    private static final String GROUP_ITEM = "group_item";
     private static final String PRIVATE_S3_LOCATION = "private_s3_location";
     private static final String DOCUMENT_TYPE = "document_type";
     private static final String COMPANY_NAME = "company_name";
     private static final String COMPANY_NUMBER = "company_number";
-    private static final String FILING_HISTORY_TYPE = "filing_history_type";
-    private static final String FILING_HISTORY_DESCRIPTION = "filing_history_description";
+    private static final String TYPE = "type";
+    private static final String DESCRIPTION = "description";
+
+    private static final String FILING_HISTORY_DESCRIPTION_VALUES = "filing_history_description_values";
 
     private final ApiClientService apiClientService;
     private final Logger logger;
@@ -58,7 +60,7 @@ class DocumentSigningService implements Service {
     @Override
     public void processMessage(ServiceParameters parameters) {
         final String orderId = parameters.getData().get(ORDER_ID).toString();
-        final String itemGroupId = parameters.getData().get(ITEM_GROUP).toString();
+        final String itemGroupId = parameters.getData().get(GROUP_ITEM).toString();
 
         logger.info("Mapping parameters for document sign request request", getLogMap(orderId, itemGroupId));
 
@@ -97,19 +99,22 @@ class DocumentSigningService implements Service {
         SignPDFApi requestBody = new SignPDFApi();
         requestBody.setDocumentLocation(parameters.getData().get(PRIVATE_S3_LOCATION).toString());
         requestBody.setDocumentType(parameters.getData().get(DOCUMENT_TYPE).toString());
-        requestBody.setKey(APPLICATION_PDF);
-        requestBody.setPrefix(environmentReader.getMandatoryString(PREFIX_ENV_VARIABLE));
 
         List<String> signatureOptions = new ArrayList<>();
         signatureOptions.add(COVERSHEET_OPTION);
         requestBody.setSignatureOptions(signatureOptions);
 
+        requestBody.setPrefix(environmentReader.getMandatoryString(PREFIX_ENV_VARIABLE));
+        requestBody.setKey(APPLICATION_PDF);
+
         CoverSheetDataApi coverSheetDataApi = new CoverSheetDataApi();
-        coverSheetDataApi.setCompanyName(parameters.getData().get(COMPANY_NAME).toString());
-        coverSheetDataApi.setCompanyNumber(parameters.getData().get(COMPANY_NUMBER).toString());
-        coverSheetDataApi.setFilingHistoryType(parameters.getData().get(FILING_HISTORY_TYPE).toString());
-        coverSheetDataApi.setFilingHistoryDescription(parameters.getData().get(FILING_HISTORY_DESCRIPTION).toString());
+        coverSheetDataApi.setCompanyName(parameters.getData().getCoverSheetData().get(COMPANY_NAME).toString());
+        coverSheetDataApi.setCompanyNumber(parameters.getData().getCoverSheetData().get(COMPANY_NUMBER).toString());
+        coverSheetDataApi.setFilingHistoryType(parameters.getData().getCoverSheetData().get(TYPE).toString());
+        coverSheetDataApi.setFilingHistoryDescription(parameters.getData().getCoverSheetData().get(DESCRIPTION).toString());
         requestBody.setCoverSheetData(coverSheetDataApi);
+
+        requestBody.setFilingHistoryDescriptionValues((Map<String, Object>) parameters.getData().get(FILING_HISTORY_DESCRIPTION_VALUES));
 
         return requestBody;
     }

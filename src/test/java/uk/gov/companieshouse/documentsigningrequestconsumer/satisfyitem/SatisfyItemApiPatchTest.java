@@ -79,7 +79,9 @@ class SatisfyItemApiPatchTest {
 
     @Test
     @DisplayName("satisfy item throws ApiErrorResponseException")
-    void throwsApiErrorResponseException() throws ApiErrorResponseException, URIValidationException {
+    void throwsApiErrorResponseException()
+        throws ApiErrorResponseException, URIValidationException {
+
         when(privateSatisfyItem.execute()).thenThrow(ApiErrorResponseException.class);
 
         assertThrows(ApiErrorResponseException.class,
@@ -91,7 +93,9 @@ class SatisfyItemApiPatchTest {
 
     @Test
     @DisplayName("satisfy item throws URIValidationException")
-    void throwsURIValidationException() throws ApiErrorResponseException, URIValidationException {
+    void throwsURIValidationException()
+        throws ApiErrorResponseException, URIValidationException {
+
         when(privateSatisfyItem.execute()).thenThrow(URIValidationException.class);
 
         assertThrows(URIValidationException.class,

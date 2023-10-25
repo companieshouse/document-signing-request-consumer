@@ -40,7 +40,7 @@ public class SignDocumentApiPost {
         final String itemGroupId = parameters.getData().get(ITEM_GROUP).toString();
         final SignPDFApi requestBody = mapMessageToRequest(environmentReader, parameters);
 
-        logger.info("Mapping parameters for document sign request request", getLogMap(orderId, itemGroupId));
+        logger.info("Mapping parameters for document sign request ", getLogMap(orderId, itemGroupId));
 
         ApiResponse<SignPDFResponseApi> response = apiClientService
             .getInternalApiClient()

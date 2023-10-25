@@ -29,7 +29,6 @@ import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class SignDocumentApiPostTest {
-    private static final String ITEM_GROUPS_ITEM_URI = "/item-groups/IG-954916-860369/items/111-222-333";
     private static final SignDigitalDocument DOCUMENT_DATA = new SignDigitalDocument(
         "location",
         "documentType",
@@ -94,7 +93,9 @@ class SignDocumentApiPostTest {
 
     @Test
     @DisplayName("sign document throws ApiErrorResponseException")
-    void throwsApiErrorResponseException() throws ApiErrorResponseException, URIValidationException {
+    void throwsApiErrorResponseException()
+        throws ApiErrorResponseException, URIValidationException {
+
         when(privateSignPDF.execute()).thenThrow(ApiErrorResponseException.class);
 
         assertThrows(ApiErrorResponseException.class,
@@ -103,7 +104,9 @@ class SignDocumentApiPostTest {
 
     @Test
     @DisplayName("sign document throws URIValidationException")
-    void throwsURIValidationException() throws ApiErrorResponseException, URIValidationException {
+    void throwsURIValidationException()
+        throws ApiErrorResponseException, URIValidationException {
+
         when(privateSignPDF.execute()).thenThrow(URIValidationException.class);
 
         assertThrows(URIValidationException.class,

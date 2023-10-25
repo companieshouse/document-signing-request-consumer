@@ -1,138 +1,73 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import static com.fasterxml.jackson.databind.util.ClassUtil.getRootCause;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.ApiUtils.getLogMap;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.ITEM_GROUP;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.ORDER_ID;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.ApiResponse;
-import uk.gov.companieshouse.api.model.documentsigning.CoverSheetDataApi;
-import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
-import uk.gov.companieshouse.environment.EnvironmentReader;
+import uk.gov.companieshouse.documentsigningrequestconsumer.satisfyitem.SatisfyItemApiPatch;
+import uk.gov.companieshouse.documentsigningrequestconsumer.signdocument.SignDocumentApiPost;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.util.DataMap;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.singletonList;
 
 /**
- * Makes sign PDF requests to the Document Signing API.
+ * Makes sign PDF requests to Document Signing API.
+ * Makes satisfy item requests to Item Group Workflow API.
  */
 @Component
-class DocumentSigningService implements Service {
-    private static final String SIGN_PDF_URI = "/document-signing/sign-pdf";
-    private static final String COVERSHEET_OPTION = "cover-sheet";
-    private static final String APPLICATION_PDF = "application-pdf";
-    private static final String PREFIX_ENV_VARIABLE = "PREFIX";
+public class DocumentSigningService implements Service {
+    public static final String SIGN_PDF_URI = "/document-signing/sign-pdf";
+    public static final String COVERSHEET_OPTION = "cover-sheet";
+    public static final String APPLICATION_PDF = "application-pdf";
+    public static final String PREFIX_ENV_VARIABLE = "PREFIX";
 
-    // Kafka Message Keys
-    private static final String ORDER_ID = "order_number";
-    private static final String ITEM_GROUP = "item_group";
-    private static final String PRIVATE_S3_LOCATION = "private_s3_location";
-    private static final String DOCUMENT_TYPE = "document_type";
-    private static final String COMPANY_NAME = "company_name";
-    private static final String COMPANY_NUMBER = "company_number";
-    private static final String FILING_HISTORY_TYPE = "filing_history_type";
-    private static final String FILING_HISTORY_DESCRIPTION = "filing_history_description";
-
-    private final ApiClientService apiClientService;
     private final Logger logger;
-    private final EnvironmentReader environmentReader;
+    private final SignDocumentApiPost signDocumentApiPost;
+    private final SatisfyItemApiPatch satisfyItemApiPatch;
 
-    public DocumentSigningService(ApiClientService apiClientService,
-                                  Logger logger,
-                                  EnvironmentReader environmentReader) {
-        this.apiClientService = apiClientService;
+    public DocumentSigningService(SignDocumentApiPost signDocumentApiPost, SatisfyItemApiPatch satisfyItemApiPatch, Logger logger) {
+        this.signDocumentApiPost = signDocumentApiPost;
+        this.satisfyItemApiPatch = satisfyItemApiPatch;
         this.logger = logger;
-        this.environmentReader = environmentReader;
     }
-
     /**
-     * Extract the message to build request to sign document
-     * @param parameters the fields present with the message
-     * @throws RetryableException to attempt retry if something fails
+     * Use Kafka message content to digitally sign a document. Update document status with SATISFIED.
+     * @param parameters Kafka message
+     * @throws RetryableException attempt retry if something retryable fails (ApiErrorResponseException, URIValidationException)
+     * @throws NonRetryableException (Exception)
      */
     @Override
     public void processMessage(ServiceParameters parameters) {
+
         final String orderId = parameters.getData().get(ORDER_ID).toString();
         final String itemGroupId = parameters.getData().get(ITEM_GROUP).toString();
 
-        logger.info("Mapping parameters for document sign request request", getLogMap(orderId, itemGroupId));
-
-        SignPDFApi requestBody = mapMessageToRequest(parameters);
-
         try {
-            ApiResponse<SignPDFResponseApi> response = apiClientService.getInternalApiClient()
-                            .privateDocumentSigningResourceHandler()
-                            .signPDF(SIGN_PDF_URI, requestBody)
-                            .execute();
+            //
+            // Digitally sign the document.
+            //
+            final ApiResponse<SignPDFResponseApi> signDocResponse = signDocumentApiPost.signDocument(parameters);
+            //
+            // Send ItemGroupWorkflowAPI status of SATISFIED for 201, otherwise FAILED, for this ItemGroup+ItemID
+            //
+            satisfyItemApiPatch.satisfyItem(
+                parameters,
+                signDocResponse.getStatusCode(),
+                signDocResponse.getData().getSignedDocumentLocation());
 
-            logger.info("API returned response: "+ response.getStatusCode(), getLogMap(orderId, itemGroupId));
-
-            //TODO Use response to populate satisfy item request
-
-        } catch (ApiErrorResponseException e) {
-            logger.error("Got error response from Document Signing API: " + e, getLogMap(orderId, itemGroupId, e));
-            throw new RetryableException("Attempting retry due to failed response", e);
-        } catch (URIValidationException e) {
-            logger.error("Error with URI: " + e, getLogMap(orderId, itemGroupId, e));
-            throw new RetryableException("Attempting retry due to URI validation error", e);
+        } catch (ApiErrorResponseException apiException) {
+            logger.error("Error response from INTERNAL API: " + apiException, getLogMap(orderId, itemGroupId, apiException));
+            throw new RetryableException("Attempting retry due to failed response", apiException);
+        } catch (URIValidationException uriException) {
+            logger.error("Error with URI: " + uriException, getLogMap(orderId, itemGroupId, uriException));
+            throw new RetryableException("Attempting retry due to URI validation error", uriException);
         } catch (Exception exception) {
             final var rootCause = getRootCause(exception);
-            logger.error("Error trying to send signPdf request to Document Signing API: "
-                    + rootCause, getLogMap(orderId, itemGroupId, rootCause));
-            throw new NonRetryableException("Unable to send signPdf request to Document Signing API", rootCause);
+            logger.error("NonRetryable Error: " + rootCause, getLogMap(orderId, itemGroupId, rootCause));
+            throw new NonRetryableException("DocumentSigningService.processMessage: ", rootCause);
         }
-    }
-
-    /**
-     * Maps the message data to a request
-     * @param parameters the fields present with the message
-     * @return the {@link SignPDFApi} data to send in request
-     */
-    private SignPDFApi mapMessageToRequest(ServiceParameters parameters) {
-        SignPDFApi requestBody = new SignPDFApi();
-        requestBody.setDocumentLocation(parameters.getData().get(PRIVATE_S3_LOCATION).toString());
-        requestBody.setDocumentType(parameters.getData().get(DOCUMENT_TYPE).toString());
-        requestBody.setKey(APPLICATION_PDF);
-        requestBody.setPrefix(environmentReader.getMandatoryString(PREFIX_ENV_VARIABLE));
-
-        List<String> signatureOptions = new ArrayList<>();
-        signatureOptions.add(COVERSHEET_OPTION);
-        requestBody.setSignatureOptions(signatureOptions);
-
-        CoverSheetDataApi coverSheetDataApi = new CoverSheetDataApi();
-        coverSheetDataApi.setCompanyName(parameters.getData().get(COMPANY_NAME).toString());
-        coverSheetDataApi.setCompanyNumber(parameters.getData().get(COMPANY_NUMBER).toString());
-        coverSheetDataApi.setFilingHistoryType(parameters.getData().get(FILING_HISTORY_TYPE).toString());
-        coverSheetDataApi.setFilingHistoryDescription(parameters.getData().get(FILING_HISTORY_DESCRIPTION).toString());
-        requestBody.setCoverSheetData(coverSheetDataApi);
-
-        return requestBody;
-    }
-
-    private Map<String, Object> getLogMap(final String orderId, final String itemGroupId, final Throwable rootCause) {
-        return new DataMap.Builder()
-            .orderId(orderId)
-            .itemGroupId(itemGroupId)
-            .errors(singletonList(rootCause.getMessage()))
-            .build()
-            .getLogMap();
-    }
-
-    private Map<String, Object> getLogMap(final String orderId, final String itemGroupId) {
-        return new DataMap.Builder()
-                .orderId(orderId)
-                .itemGroupId(itemGroupId)
-                .build()
-                .getLogMap();
-    }
-
-    private Throwable getRootCause(final Exception exception) {
-        final var rootCause = ExceptionUtils.getRootCause(exception);
-        return rootCause != null ? rootCause : exception;
     }
 }

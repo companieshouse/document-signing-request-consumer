@@ -58,6 +58,7 @@ class SatisfyItemApiPatchTest {
 
     @BeforeEach
     void setUp() {
+        // Given
         when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateSatisfyItemResourceHandler()).thenReturn(privateSatisfyItemResourceHandler);
         when(privateSatisfyItemResourceHandler.satisfyItem(anyString(), any(SatisfyItemApi.class))).thenReturn(privateSatisfyItem);
@@ -81,9 +82,9 @@ class SatisfyItemApiPatchTest {
     @DisplayName("satisfy item throws ApiErrorResponseException")
     void throwsApiErrorResponseException()
         throws ApiErrorResponseException, URIValidationException {
-
+        // When
         when(privateSatisfyItem.execute()).thenThrow(ApiErrorResponseException.class);
-
+        // Then
         assertThrows(ApiErrorResponseException.class,
             () -> satisfyItemApiPatch.satisfyItem(
                 messageParams,
@@ -95,9 +96,9 @@ class SatisfyItemApiPatchTest {
     @DisplayName("satisfy item throws URIValidationException")
     void throwsURIValidationException()
         throws ApiErrorResponseException, URIValidationException {
-
+        // When
         when(privateSatisfyItem.execute()).thenThrow(URIValidationException.class);
-
+        // Then
         assertThrows(URIValidationException.class,
             () -> satisfyItemApiPatch.satisfyItem(
                 messageParams,

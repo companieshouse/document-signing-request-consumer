@@ -4,7 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -84,12 +87,11 @@ class DocumentSigningServiceTest {
     private SatisfyItemApiPatch satisfyItemApiPatchInjectMock;
 
     void processMessageSetup() {
-
 //        when(environmentReader.getMandatoryString(anyString())).thenReturn("test/certified-copy");
-//        when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
+        when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
 //
-//        when(internalApiClient.privateDocumentSigningResourceHandler()).thenReturn(privateDocumentSigningResourceHandler);
-//        when(privateDocumentSigningResourceHandler.signPDF(anyString(), any(SignPDFApi.class))).thenReturn(privateSignPDF);
+        when(internalApiClient.privateDocumentSigningResourceHandler()).thenReturn(privateDocumentSigningResourceHandler);
+        when(privateDocumentSigningResourceHandler.signPDF(anyString(), any(SignPDFApi.class))).thenReturn(privateSignPDF);
 //
 //        when(internalApiClient.privateSatisfyItemResourceHandler()).thenReturn(privateSatisfyItemResourceHandler);
 //        when(privateSatisfyItemResourceHandler.satisfyItem(anyString(), any(SatisfyItemApi.class))).thenReturn(privateSatisfyItem);
@@ -132,32 +134,41 @@ class DocumentSigningServiceTest {
     }
 
     @Test
-    @DisplayName("Test process message sends sign document request and updates status via ItemGroupWorkflowAPI")
+    @DisplayName("process message sends sign document request and updates status")
     void processMessageSucceeds() throws Exception {
         // Given
-        processMessageSetup();
-
-        when(privateSignPDF.execute()).thenReturn(signPdfResponse);
-        when(privateSatisfyItem.execute()).thenReturn(satisfyItemResponse);
-
-        when(signPdfResponse.getStatusCode()).thenReturn(HttpStatus.CREATED.value());
-//        when(signPdfResponse.getData()).thenReturn(signPDFResponseApi);
-//        when(signDocumentApiPostMock.signDocument(messageParams)).thenReturn(signPdfResponse);
-
-//        when(signDocumentApiPostMock.signDocument(messageParams)).thenReturn(signPdfResponse);
+//        processMessageSetup();
 //
-//        doNothing().when(satisfyItemApiPatchMock)
-//            .satisfyItem(
-//                isA(ServiceParameters.class),
-//                isA(Integer.class),
-//                isA(String.class));
+//        when(privateSignPDF.execute()).thenReturn(signPdfResponse);
+//        when(privateSatisfyItem.execute()).thenReturn(satisfyItemResponse);
+//        when(signPdfResponse.getStatusCode()).thenReturn(HttpStatus.CREATED.value());
+//        when(signPdfResponse.getData()).thenReturn(signPDFResponseApi);
+//        when(signPdfResponse.getData().getSignedDocumentLocation()).thenReturn("something something...");
 
-//        when(satisfyItemApiPatch.satisfyItem(any(), any(), any())).thenReturn(satisfyItemResponse);
+//        doReturn(signPdfResponse).when(signDocumentApiPostInjectMock.signDocument(messageParams));
+//        var response = signDocumentApiPostInjectMock.signDocument(messageParams);
+//        when(signDocumentApiPostMock.signDocument(messageParams)).thenReturn(signPdfResponse);
+
+//        when(signDocumentApiPostInjectMock.signDocument(messageParams)).thenReturn(signPdfResponse);
+
+        when(signDocumentApiPostMock.signDocument(messageParams)).thenReturn(createApiSignDocumentApiResponse());
+//        doNothing().when(satisfyItemApiPatchInjectMock)
+        doNothing().when(satisfyItemApiPatchMock)
+            .satisfyItem(
+                isA(ServiceParameters.class),
+                isA(Integer.class),
+                isA(String.class));
 
         // When
         documentSigningService.processMessage(messageParams);
         // Then
         verify(signDocumentApiPostInjectMock.signDocument(messageParams), atLeastOnce());
         verify(satisfyItemApiPatchMock, atLeastOnce()).satisfyItem(any(), anyInt(), any());
+    }
+
+    private ApiResponse<SignPDFResponseApi> createApiSignDocumentApiResponse() {
+        SignPDFResponseApi response = new SignPDFResponseApi();
+        response.setSignedDocumentLocation("example.pdf");
+        return new ApiResponse<>(200, null, response);
     }
 }

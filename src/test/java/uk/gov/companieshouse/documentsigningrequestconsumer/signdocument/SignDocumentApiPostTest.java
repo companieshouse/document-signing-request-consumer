@@ -60,6 +60,7 @@ class SignDocumentApiPostTest {
 
     @BeforeEach
     void setUp() {
+        // Given
         when(environmentReader.getMandatoryString(anyString())).thenReturn("test/certified-copy");
         when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateDocumentSigningResourceHandler()).thenReturn(privateDocumentSigningResourceHandler);
@@ -95,9 +96,9 @@ class SignDocumentApiPostTest {
     @DisplayName("sign document throws ApiErrorResponseException")
     void throwsApiErrorResponseException()
         throws ApiErrorResponseException, URIValidationException {
-
+        // When
         when(privateSignPDF.execute()).thenThrow(ApiErrorResponseException.class);
-
+        // Then
         assertThrows(ApiErrorResponseException.class,
             () -> signDocumentApiPost.signDocument(messageParams));
     }
@@ -106,9 +107,9 @@ class SignDocumentApiPostTest {
     @DisplayName("sign document throws URIValidationException")
     void throwsURIValidationException()
         throws ApiErrorResponseException, URIValidationException {
-
+        // When
         when(privateSignPDF.execute()).thenThrow(URIValidationException.class);
-
+        // Then
         assertThrows(URIValidationException.class,
             () -> signDocumentApiPost.signDocument(messageParams));
     }

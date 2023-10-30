@@ -23,21 +23,30 @@ import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.documentsigningrequestconsumer.satisfyitem.SatisfyItemApiPatch;
 import uk.gov.companieshouse.documentsigningrequestconsumer.signdocument.SignDocumentApiPost;
 import uk.gov.companieshouse.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 class DocumentSigningServiceTest {
+
+    public static final Map<String, String> FILING_HISTORY_DESCRIPTION_VALUES  = new HashMap<String, String>() {{
+        put("testKey1", "testValue1");
+        put("testKey2", "testValue2");
+    }};
+
     private static final SignDigitalDocument DOCUMENT_DATA = new SignDigitalDocument(
-        "location",
-        "documentType",
-        "itemGroup",
-        "orderNum",
-        "companyName",
-        "companyNumber",
-        "filingHistoryDescription",
-        "filingHistoryType"
+      "location",
+      "documentType",
+      "itemGroup",
+      "orderNum",
+      "companyName",
+      "companyNumber",
+      "filingHistoryDescription",
+      "filingHistoryType",
+      FILING_HISTORY_DESCRIPTION_VALUES
     );
     private static final ServiceParameters messageParams = new ServiceParameters(DOCUMENT_DATA);
-
+  
     @Mock
     private Logger logger;
     @Mock

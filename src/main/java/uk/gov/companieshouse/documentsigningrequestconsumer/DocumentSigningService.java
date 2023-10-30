@@ -43,7 +43,7 @@ public class DocumentSigningService implements Service {
     public void processMessage(ServiceParameters parameters) {
 
         final String orderId = parameters.getData().get(ORDER_ID).toString();
-        final String itemGroupId = parameters.getData().get(ITEM_GROUP).toString();
+        final String itemGroupId = parameters.getData().get(GROUP_ITEM).toString();
 
         try {
             //

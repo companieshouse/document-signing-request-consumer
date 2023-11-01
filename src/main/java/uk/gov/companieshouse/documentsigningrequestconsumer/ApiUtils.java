@@ -6,9 +6,9 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigni
 import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningService.PREFIX_ENV_VARIABLE;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.COMPANY_NAME;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.COMPANY_NUMBER;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.DESCRIPTION;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.DOCUMENT_TYPE;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.FILING_HISTORY_DESCRIPTION;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.FILING_HISTORY_TYPE;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.TYPE;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.PRIVATE_S3_LOCATION;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import uk.gov.companieshouse.api.model.documentsigning.CoverSheetDataApi;
@@ -32,10 +32,10 @@ public final class ApiUtils {
         requestBody.setSignatureOptions(signatureOptions);
 
         CoverSheetDataApi coverSheetDataApi = new CoverSheetDataApi();
-        coverSheetDataApi.setCompanyName(parameters.getData().get(COMPANY_NAME).toString());
-        coverSheetDataApi.setCompanyNumber(parameters.getData().get(COMPANY_NUMBER).toString());
-        coverSheetDataApi.setFilingHistoryType(parameters.getData().get(FILING_HISTORY_TYPE).toString());
-        coverSheetDataApi.setFilingHistoryDescription(parameters.getData().get(FILING_HISTORY_DESCRIPTION).toString());
+        coverSheetDataApi.setCompanyName(parameters.getData().getCoverSheetData().get(COMPANY_NAME).toString());
+        coverSheetDataApi.setCompanyNumber(parameters.getData().getCoverSheetData().get(COMPANY_NUMBER).toString());
+        coverSheetDataApi.setFilingHistoryType(parameters.getData().getCoverSheetData().get(TYPE).toString());
+        coverSheetDataApi.setFilingHistoryDescription(parameters.getData().getCoverSheetData().get(DESCRIPTION).toString());
         requestBody.setCoverSheetData(coverSheetDataApi);
 
         return requestBody;

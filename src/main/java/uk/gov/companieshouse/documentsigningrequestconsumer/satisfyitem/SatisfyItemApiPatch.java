@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer.satisfyitem;
 
 import static uk.gov.companieshouse.documentsigningrequestconsumer.ApiUtils.getLogMap;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.ITEM_GROUP;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.GROUP_ITEM;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.ORDER_ID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class SatisfyItemApiPatch {
         //
         // API payload.
         //
-        final String itemGroupURI = parameters.getData().getItemGroup();
+        final String itemGroupURI = parameters.getData().getGroupItem();
         final Status documentStatus = (status == HttpStatus.CREATED.value()) ? Status.SATISFIED : Status.FAILED;
         final SatisfyItemApi satisfyItemApi = new SatisfyItemApi(documentStatus.toString(), documentLocation);
         //
@@ -48,6 +48,6 @@ public class SatisfyItemApiPatch {
             .execute();
 
         logger.info("API returned response: "+ response.getStatusCode(),
-            getLogMap(parameters.getData().get(ORDER_ID).toString(), parameters.getData().get(ITEM_GROUP).toString()));
+            getLogMap(parameters.getData().get(ORDER_ID).toString(), parameters.getData().get(GROUP_ITEM).toString()));
     }
 }

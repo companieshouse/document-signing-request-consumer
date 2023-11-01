@@ -3,7 +3,7 @@ package uk.gov.companieshouse.documentsigningrequestconsumer.signdocument;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningService.SIGN_PDF_URI;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.ApiUtils.getLogMap;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.ApiUtils.mapMessageToRequest;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.ITEM_GROUP;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.GROUP_ITEM;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.ORDER_ID;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -37,7 +37,7 @@ public class SignDocumentApiPost {
         throws ApiErrorResponseException, URIValidationException {
 
         final String orderId = parameters.getData().get(ORDER_ID).toString();
-        final String itemGroupId = parameters.getData().get(ITEM_GROUP).toString();
+        final String itemGroupId = parameters.getData().get(GROUP_ITEM).toString();
         final SignPDFApi requestBody = mapMessageToRequest(environmentReader, parameters);
 
         logger.info("Mapping parameters for document sign request ", getLogMap(orderId, itemGroupId));

@@ -2,7 +2,7 @@ package uk.gov.companieshouse.documentsigningrequestconsumer;
 
 import static com.fasterxml.jackson.databind.util.ClassUtil.getRootCause;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.ApiUtils.getLogMap;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.ITEM_GROUP;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.GROUP_ITEM;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.ORDER_ID;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -43,7 +43,7 @@ public class DocumentSigningService implements Service {
     public void processMessage(ServiceParameters parameters) {
 
         final String orderId = parameters.getData().get(ORDER_ID).toString();
-        final String itemGroupId = parameters.getData().get(ITEM_GROUP).toString();
+        final String itemGroupId = parameters.getData().get(GROUP_ITEM).toString();
 
         try {
             //

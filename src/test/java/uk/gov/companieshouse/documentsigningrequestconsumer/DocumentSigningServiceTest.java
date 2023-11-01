@@ -9,6 +9,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,24 +30,7 @@ import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 class DocumentSigningServiceTest {
-
-    public static final Map<String, String> FILING_HISTORY_DESCRIPTION_VALUES  = new HashMap<String, String>() {{
-        put("testKey1", "testValue1");
-        put("testKey2", "testValue2");
-    }};
-
-    private static final SignDigitalDocument DOCUMENT_DATA = new SignDigitalDocument(
-      "location",
-      "documentType",
-      "itemGroup",
-      "orderNum",
-      "companyName",
-      "companyNumber",
-      "filingHistoryDescription",
-      "filingHistoryType",
-      FILING_HISTORY_DESCRIPTION_VALUES
-    );
-    private static final ServiceParameters messageParams = new ServiceParameters(DOCUMENT_DATA);
+    private static final ServiceParameters messageParams = new ServiceParameters(DOCUMENT);
   
     @Mock
     private Logger logger;
@@ -97,7 +82,7 @@ class DocumentSigningServiceTest {
     @DisplayName("process message sends sign document request and updates status")
     void processMessageSucceeds() throws Exception {
         //Define Parameters
-        ServiceParameters messageParams = new ServiceParameters(DOCUMENT_DATA);
+        ServiceParameters messageParams = new ServiceParameters(DOCUMENT);
 
         //Mock the behaviour of SignDocumentApiPost
         when(signDocumentApiPostMock.signDocument(messageParams)).thenReturn(createApiResponse());

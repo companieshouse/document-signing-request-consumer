@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,25 +23,19 @@ import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
+import uk.gov.companieshouse.documentsigning.CoverSheetDataRecord;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.documentsigningrequestconsumer.ApiClientService;
 import uk.gov.companieshouse.documentsigningrequestconsumer.ServiceParameters;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @ExtendWith(MockitoExtension.class)
 class SignDocumentApiPostTest {
-    private static final SignDigitalDocument DOCUMENT_DATA = new SignDigitalDocument(
-        "location",
-        "documentType",
-        "itemGroup",
-        "orderNum",
-        "companyName",
-        "companyNumber",
-        "filingHistoryDescription",
-        "filingHistoryType"
-    );
-    private static final ServiceParameters messageParams = new ServiceParameters(DOCUMENT_DATA);
+    private static final ServiceParameters messageParams = new ServiceParameters(DOCUMENT);
 
     @Mock
     private Logger logger;
@@ -66,17 +62,6 @@ class SignDocumentApiPostTest {
         when(internalApiClient.privateDocumentSigningResourceHandler()).thenReturn(privateDocumentSigningResourceHandler);
         when(privateDocumentSigningResourceHandler.signPDF(anyString(), any(SignPDFApi.class))).thenReturn(privateSignPDF);
     }
-
-    private static final SignDigitalDocument DATA = new SignDigitalDocument(
-        "location",
-        "documentType",
-        "itemGroup",
-        "orderNum",
-        "companyName",
-        "companyNumber",
-        "filingHistoryDescription",
-        "filingHistoryType"
-    );
 
     @Test
     @DisplayName("sign document")

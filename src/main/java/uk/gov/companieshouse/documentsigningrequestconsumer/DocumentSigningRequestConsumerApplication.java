@@ -15,5 +15,4 @@ public class DocumentSigningRequestConsumerApplication {
             SpringApplication.run(DocumentSigningRequestConsumerApplication.class, args);
         }
     }
-
 }

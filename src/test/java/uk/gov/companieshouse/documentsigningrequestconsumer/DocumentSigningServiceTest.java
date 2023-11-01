@@ -1,143 +1,104 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
-import uk.gov.companieshouse.api.handler.documentsigning.PrivateDocumentSigningResourceHandler;
-import uk.gov.companieshouse.api.handler.documentsigning.request.PrivateSignPDF;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.ApiResponse;
-import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
-import uk.gov.companieshouse.documentsigning.CoverSheetDataRecord;
-import uk.gov.companieshouse.environment.EnvironmentReader;
-import uk.gov.companieshouse.environment.exception.EnvironmentVariableException;
+import uk.gov.companieshouse.documentsigningrequestconsumer.satisfyitem.SatisfyItemApiPatch;
+import uk.gov.companieshouse.documentsigningrequestconsumer.signdocument.SignDocumentApiPost;
 import uk.gov.companieshouse.logging.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class DocumentSigningServiceTest {
-
-    @Mock
-    private ApiClientService apiClientService;
-
+    private static final ServiceParameters messageParams = new ServiceParameters(DOCUMENT);
+  
     @Mock
     private Logger logger;
-
     @Mock
-    EnvironmentReader environmentReader;
-
+    private SignDocumentApiPost signDocumentApiPostMock;
     @Mock
-    private InternalApiClient internalApiClient;
-
-    @Mock
-    private PrivateDocumentSigningResourceHandler privateDocumentSigningResourceHandler;
-
-    @Mock
-    private PrivateSignPDF privateSignPDF;
-
-    @Mock
-    private ApiResponse<SignPDFResponseApi> response;
-
+    private SatisfyItemApiPatch satisfyItemApiPatchMock;
     @InjectMocks
     private DocumentSigningService documentSigningService;
 
-    public static final Map<String, String> FILING_HISTORY_DESCRIPTION_VALUES  = new HashMap<String, String>() {{
-        put("testKey1", "testValue1");
-        put("testKey2", "testValue2");
-    }};
+    @Test
+    @DisplayName("process message throws RetryableException when ApiErrorResponseException caught")
+    void processMessageThrowsRetryableExceptionWhenApiErrorResponseExceptionCaught()
+        throws ApiErrorResponseException, URIValidationException {
 
-    private static final CoverSheetDataRecord COVER_SHEET_DATA_RECORD = new CoverSheetDataRecord(
-            "companyName",
-            "companyNumber",
-            "description",
-            "type"
-    );
-
-    private final SignDigitalDocument DATA = new SignDigitalDocument(
-         COVER_SHEET_DATA_RECORD,
-        "privateS3Location",
-        "documentType",
-        "groupItem",
-        "orderNumber",
-         FILING_HISTORY_DESCRIPTION_VALUES
-
-    );
-
-    @BeforeEach
-    void init() {
-        when(environmentReader.getMandatoryString(anyString())).thenReturn("test/certified-copy");
-        when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
-        when(internalApiClient.privateDocumentSigningResourceHandler()).thenReturn(privateDocumentSigningResourceHandler);
-        when(privateDocumentSigningResourceHandler.signPDF(anyString(), any(SignPDFApi.class))).thenReturn(privateSignPDF);
+        // When
+        doThrow(ApiErrorResponseException.class)
+            .when(signDocumentApiPostMock).signDocument(any());
+        // Then
+        assertThrows(RetryableException.class,
+            () -> documentSigningService.processMessage(messageParams));
     }
 
     @Test
-    @DisplayName("Test process message sends sign document request")
-    void processMessageSendsRequest() throws Exception {
-        ServiceParameters parameters = new ServiceParameters(DATA);
-        when(privateSignPDF.execute()).thenReturn(response);
-
-        documentSigningService.processMessage(parameters);
-        verify(apiClientService, atLeastOnce()).getInternalApiClient();
-        verify(internalApiClient, atLeastOnce()).privateDocumentSigningResourceHandler();
-        verify(privateDocumentSigningResourceHandler, atLeastOnce()).signPDF(anyString(), any(SignPDFApi.class));
-        verify(privateSignPDF, atLeastOnce()).execute();
+    @DisplayName("process message throws RetryableException when URIValidationException caught")
+    void processMessageThrowsRetryableExceptionWhenURIValidationExceptionCaught()
+        throws ApiErrorResponseException, URIValidationException {
+        // When
+        doThrow(URIValidationException.class)
+            .when(signDocumentApiPostMock).signDocument(any());
+        // Then
+        assertThrows(RetryableException.class,
+            () -> documentSigningService.processMessage(messageParams));
     }
 
     @Test
-    @DisplayName("Test process message throws RetryableException when ApiErrorResponseException caught")
-    void processMessageThrowsRetryableExceptionWithApiErrorResponseException() throws Exception {
-        ServiceParameters parameters = new ServiceParameters(DATA);
-
-        when(privateSignPDF.execute()).thenThrow(ApiErrorResponseException.class);
-        final RetryableException exception = assertThrows(RetryableException.class,
-            () -> documentSigningService.processMessage(parameters));
-
-        assertThat(exception.getMessage(),
-            is("Attempting retry due to failed response"));
+    @DisplayName("process message throws NonRetryableException when any non-checked exception caught")
+    void processMessageThrowsNonRetryableExceptionWhenExceptionCaught()
+        throws ApiErrorResponseException, URIValidationException {
+        // When
+        doThrow(RuntimeException.class)
+            .when(signDocumentApiPostMock).signDocument(any());
+        // Then
+        assertThrows(NonRetryableException.class,
+            () -> documentSigningService.processMessage(messageParams));
     }
 
     @Test
-    @DisplayName("Test process message throws RetryableException when URIValidationException caught")
-    void processMessageThrowsRetryableExceptionWithURIValidationException() throws Exception {
-        ServiceParameters parameters = new ServiceParameters(DATA);
+    @DisplayName("process message sends sign document request and updates status")
+    void processMessageSucceeds() throws Exception {
 
-        when(privateSignPDF.execute()).thenThrow(URIValidationException.class);
-        final RetryableException exception = assertThrows(RetryableException.class,
-            () -> documentSigningService.processMessage(parameters));
+        //Mock the behaviour of SignDocumentApiPost
+        when(signDocumentApiPostMock.signDocument(messageParams)).thenReturn(createApiResponse());
 
-        assertThat(exception.getMessage(),
-            is("Attempting retry due to URI validation error"));
+        //Mock the internal API call within satisfyItem
+        doNothing().when(satisfyItemApiPatchMock)
+            .satisfyItem(eq(messageParams), eq(200), anyString());
+
+        //Call the method to be tested
+        documentSigningService.processMessage(messageParams);
+        verify(signDocumentApiPostMock, atLeastOnce()).signDocument(messageParams);
+        verify(satisfyItemApiPatchMock, atLeastOnce()).satisfyItem(eq(messageParams), eq(200), anyString());
     }
 
-    @Test
-    @DisplayName("Test process message throws NonRetryableException when EnvironmentVariableException caught")
-    void processMessageThrowsNonRetryableExceptionWithEnvironmentVariableException() throws Exception {
-        final ServiceParameters parameters = new ServiceParameters(DATA);
-
-        when(privateSignPDF.execute()).thenThrow(EnvironmentVariableException.class);
-        final NonRetryableException exception = assertThrows(NonRetryableException.class,
-                () -> documentSigningService.processMessage(parameters));
-
-        assertThat(exception.getMessage(),
-                is("Unable to send signPdf request to Document Signing API"));
+    //Helper method to create a sample ApiResponse
+    private ApiResponse<SignPDFResponseApi> createApiResponse() {
+        SignPDFResponseApi response = new SignPDFResponseApi();
+        response.setSignedDocumentLocation("example.pdf");
+        return new ApiResponse<>(200, null, response);
     }
 }

@@ -37,6 +37,8 @@ public final class ApiUtils {
         coverSheetDataApi.setFilingHistoryType(parameters.getData().getCoverSheetData().get(TYPE).toString());
         coverSheetDataApi.setFilingHistoryDescription(parameters.getData().getCoverSheetData().get(DESCRIPTION).toString());
         requestBody.setCoverSheetData(coverSheetDataApi);
+        requestBody.setFilingHistoryDescriptionValues((Map<String, Object>) parameters.getData()
+            .get(FILING_HISTORY_DESCRIPTION_VALUES));
 
         return requestBody;
     }

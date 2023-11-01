@@ -81,8 +81,6 @@ class DocumentSigningServiceTest {
     @Test
     @DisplayName("process message sends sign document request and updates status")
     void processMessageSucceeds() throws Exception {
-        //Define Parameters
-        ServiceParameters messageParams = new ServiceParameters(DOCUMENT);
 
         //Mock the behaviour of SignDocumentApiPost
         when(signDocumentApiPostMock.signDocument(messageParams)).thenReturn(createApiResponse());

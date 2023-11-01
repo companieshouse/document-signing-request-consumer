@@ -8,6 +8,7 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.C
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.COMPANY_NUMBER;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.DESCRIPTION;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.DOCUMENT_TYPE;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.FILING_HISTORY_DESCRIPTION_VALUES;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.TYPE;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.PRIVATE_S3_LOCATION;
 import org.apache.commons.lang.exception.ExceptionUtils;

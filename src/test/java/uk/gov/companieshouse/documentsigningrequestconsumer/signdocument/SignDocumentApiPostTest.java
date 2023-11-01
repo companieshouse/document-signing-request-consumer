@@ -7,7 +7,6 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,15 +22,10 @@ import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
-import uk.gov.companieshouse.documentsigning.CoverSheetDataRecord;
-import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.documentsigningrequestconsumer.ApiClientService;
 import uk.gov.companieshouse.documentsigningrequestconsumer.ServiceParameters;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 class SignDocumentApiPostTest {

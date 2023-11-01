@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer.signdocument;
 
-import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningService.SIGN_PDF_URI;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.ApiUtils.getLogMap;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.ApiUtils.mapMessageToRequest;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningService.SIGN_PDF_URI;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.GROUP_ITEM;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.ORDER_ID;
 import org.springframework.stereotype.Component;

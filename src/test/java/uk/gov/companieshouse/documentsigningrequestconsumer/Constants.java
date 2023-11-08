@@ -2,7 +2,6 @@ package uk.gov.companieshouse.documentsigningrequestconsumer;
 
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.documentsigning.CoverSheetDataRecord;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,10 +24,10 @@ public class Constants {
 
     public static final SignDigitalDocument DOCUMENT = SignDigitalDocument.newBuilder()
             .setCoverSheetData(coverSheetData)
-            .setOrderNumber("ORD-152416-079544")
+            .setOrderNumber("CCD-123456-123456")
             .setPrivateS3Location("s3://document-api-images-cidev/docs/--EdB7fbldt5oujK6Nz7jZ3hGj_x6vW8Q_2gQTyjWBM/application-pdf")
             .setDocumentType("363s")
-            .setGroupItem("ORD-152416-079544-1")
+            .setGroupItem("/item-groups/IG-123456-123456/items/CCD-123456-123456")
             .setFilingHistoryDescriptionValues(FILING_HISTORY_DESCRIPTION_VALUES)
             .build();
 

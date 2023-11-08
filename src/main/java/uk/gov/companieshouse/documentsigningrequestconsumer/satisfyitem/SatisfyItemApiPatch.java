@@ -32,19 +32,17 @@ public class SatisfyItemApiPatch {
      */
     public void satisfyItem(ServiceParameters parameters, int status, String documentLocation)
         throws ApiErrorResponseException, URIValidationException {
-        //
-        // API payload.
-        //
-        final String itemGroupURI = parameters.getData().getGroupItem();
+
+        final String itemGroupsUri = parameters.getData().getGroupItem();
         final Status documentStatus = (status == HttpStatus.CREATED.value()) ? Status.SATISFIED : Status.FAILED;
         final SatisfyItemApi satisfyItemApi = new SatisfyItemApi(documentStatus.toString(), documentLocation);
         //
-        // API call to ItemGroupWorkflowAPI->SatisfyItem
+        // API PATCH to ItemGroupWorkflowAPI->SatisfyItem
         //
         ApiResponse<Void> response = apiClientService
             .getInternalApiClient()
             .privateSatisfyItemResourceHandler()
-            .satisfyItem(itemGroupURI, satisfyItemApi)
+            .satisfyItem(itemGroupsUri, satisfyItemApi)
             .execute();
 
         logger.info("API returned response: "+ response.getStatusCode(),

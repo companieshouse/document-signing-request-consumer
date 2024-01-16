@@ -27,7 +27,8 @@ public class Constants {
             .setOrderNumber("CCD-123456-123456")
             .setPrivateS3Location("s3://document-api-images-cidev/docs/--EdB7fbldt5oujK6Nz7jZ3hGj_x6vW8Q_2gQTyjWBM/application-pdf")
             .setDocumentType("363s")
-            .setGroupItem("/item-groups/IG-123456-123456/items/CCD-123456-123456")
+            .setGroupItem("/item-groups/IG-123456-123456/items/")
+            .setItemId("CCD-123456-123456")
             .setFilingHistoryDescriptionValues(FILING_HISTORY_DESCRIPTION_VALUES)
             .build();
 

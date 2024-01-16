@@ -11,6 +11,7 @@ public class MessageKeys {
      */
     public static final String ORDER_ID = "order_number";
     public static final String GROUP_ITEM = "group_item";
+    public static final String ITEM_ID = "item_id";
     public static final String PRIVATE_S3_LOCATION = "private_s3_location";
     public static final String DOCUMENT_TYPE = "document_type";
     public static final String COMPANY_NAME = "company_name";

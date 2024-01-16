@@ -28,7 +28,9 @@ import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class SatisfyItemApiPatchTest {
-    private static final String ITEM_GROUPS_ITEM_URI = "/item-groups/IG-123456-123456/items/CCD-123456-123456";
+    private final static String GROUP_ITEM = "/item-groups/IG-123456-123456/items/";
+    private final static String ITEM_ID = "CCD-123456-123456";
+    private static final String ITEM_GROUPS_ITEM_URI = GROUP_ITEM + ITEM_ID;
     private static final ServiceParameters messageParams = new ServiceParameters(DOCUMENT);
     @Mock
     private Logger logger;

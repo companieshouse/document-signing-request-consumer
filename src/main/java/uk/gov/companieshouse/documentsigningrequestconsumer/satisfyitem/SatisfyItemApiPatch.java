@@ -33,7 +33,7 @@ public class SatisfyItemApiPatch {
     public void satisfyItem(ServiceParameters parameters, int status, String documentLocation)
         throws ApiErrorResponseException, URIValidationException {
 
-        final String itemGroupsUri = parameters.getData().getGroupItem();
+        final String itemGroupsUri = parameters.getData().getGroupItem() + parameters.getData().getItemId();
         final Status documentStatus = (status == HttpStatus.CREATED.value()) ? Status.SATISFIED : Status.FAILED;
         final SatisfyItemApi satisfyItemApi = new SatisfyItemApi(documentStatus.toString(), documentLocation);
         //

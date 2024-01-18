@@ -33,7 +33,11 @@ public class SatisfyItemApiPatch {
     public void satisfyItem(ServiceParameters parameters, int status, String documentLocation)
         throws ApiErrorResponseException, URIValidationException {
 
-        final String itemGroupsUri = parameters.getData().getGroupItem() + parameters.getData().getItemId();
+//        final String itemGroupsUri = parameters.getData().getGroupItem() + parameters.getData().getItemId();
+        final String itemGroupsUri = getGroupItemExcludingItemId(parameters.getData().getGroupItem())
+            + parameters.getData().getItemId();
+        System.out.printf("\nitemGroupsUri = [%s]\n", itemGroupsUri);
+
         final Status documentStatus = (status == HttpStatus.CREATED.value()) ? Status.SATISFIED : Status.FAILED;
         final SatisfyItemApi satisfyItemApi = new SatisfyItemApi(documentStatus.toString(), documentLocation);
         //
@@ -47,5 +51,17 @@ public class SatisfyItemApiPatch {
 
         logger.info("API returned response: "+ response.getStatusCode(),
             getLogMap(parameters.getData().get(ORDER_ID).toString(), parameters.getData().get(GROUP_ITEM).toString()));
+    }
+
+    private String getGroupItemExcludingItemId (final String groupItem)
+    {
+        String groupItemExcludingItemId = "";
+        int lastIndex = 0;
+
+        if ((lastIndex = groupItem.lastIndexOf('/')) != -1) {
+            groupItemExcludingItemId = groupItem.substring(0, lastIndex + 1);
+        }
+
+        return groupItemExcludingItemId;
     }
 }

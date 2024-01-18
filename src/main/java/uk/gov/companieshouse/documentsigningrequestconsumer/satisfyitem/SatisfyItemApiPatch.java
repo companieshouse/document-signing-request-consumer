@@ -33,7 +33,6 @@ public class SatisfyItemApiPatch {
     public void satisfyItem(ServiceParameters parameters, int status, String documentLocation)
         throws ApiErrorResponseException, URIValidationException {
 
-//        final String itemGroupsUri = parameters.getData().getGroupItem() + parameters.getData().getItemId();
         final String itemGroupsUri = getGroupItemExcludingItemId(parameters.getData().getGroupItem())
             + parameters.getData().getItemId();
 

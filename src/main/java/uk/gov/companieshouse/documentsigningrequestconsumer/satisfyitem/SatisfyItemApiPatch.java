@@ -36,7 +36,6 @@ public class SatisfyItemApiPatch {
 //        final String itemGroupsUri = parameters.getData().getGroupItem() + parameters.getData().getItemId();
         final String itemGroupsUri = getGroupItemExcludingItemId(parameters.getData().getGroupItem())
             + parameters.getData().getItemId();
-        System.out.printf("\nitemGroupsUri = [%s]\n", itemGroupsUri);
 
         final Status documentStatus = (status == HttpStatus.CREATED.value()) ? Status.SATISFIED : Status.FAILED;
         final SatisfyItemApi satisfyItemApi = new SatisfyItemApi(documentStatus.toString(), documentLocation);

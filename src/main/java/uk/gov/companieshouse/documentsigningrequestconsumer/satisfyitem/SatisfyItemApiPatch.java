@@ -7,9 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.api.handler.regex.URIValidator;
+import uk.gov.companieshouse.api.handler.satisfyitem.request.PrivateSatisfyItemURIPattern;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.satisfyitem.SatisfyItemApi;
 import uk.gov.companieshouse.documentsigningrequestconsumer.ApiClientService;
+import uk.gov.companieshouse.documentsigningrequestconsumer.NonRetryableException;
 import uk.gov.companieshouse.documentsigningrequestconsumer.RetryableException;
 import uk.gov.companieshouse.documentsigningrequestconsumer.ServiceParameters;
 import uk.gov.companieshouse.logging.Logger;
@@ -33,8 +36,8 @@ public class SatisfyItemApiPatch {
     public void satisfyItem(ServiceParameters parameters, int status, String documentLocation)
         throws ApiErrorResponseException, URIValidationException {
 
-        final String itemGroupsUri = getGroupItemExcludingItemId(parameters.getData().getGroupItem())
-            + parameters.getData().getItemId();
+        final String itemGroup = getGroupItemExcludingItemId(parameters.getData().getGroupItem());
+        final String itemGroupsUri = itemGroup + parameters.getData().getItemId();
 
         final Status documentStatus = (status == HttpStatus.CREATED.value()) ? Status.SATISFIED : Status.FAILED;
         final SatisfyItemApi satisfyItemApi = new SatisfyItemApi(documentStatus.toString(), documentLocation);
@@ -53,13 +56,19 @@ public class SatisfyItemApiPatch {
 
     private String getGroupItemExcludingItemId (final String groupItem)
     {
-        String groupItemExcludingItemId = "";
-        int lastIndex = 0;
-
-        if ((lastIndex = groupItem.lastIndexOf('/')) != -1) {
-            groupItemExcludingItemId = groupItem.substring(0, lastIndex + 1);
-        }
-
-        return groupItemExcludingItemId;
+        //
+        // item group is populated by item-group-workflow-api using item->links->self
+        // Correct format check.
+        //
+        if (!URIValidator.validate(PrivateSatisfyItemURIPattern.getCompiledSatisfyItemsURIPattern(), groupItem))
+            throw new NonRetryableException(
+                "Invalid GroupItem: " +
+                groupItem +
+                " Must be in format: " +
+                PrivateSatisfyItemURIPattern.getCompiledSatisfyItemsURIPattern());
+        //
+        // Strip item id
+        //
+        return groupItem.substring(0, groupItem.lastIndexOf('/') + 1);
     }
 }

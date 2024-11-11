@@ -8,7 +8,7 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.EnvironmentVa
 @SpringBootApplication
 public class DocumentSigningRequestConsumerApplication {
 
-    public static final String NAMESPACE = "document-signing-request-consumer";
+    public static final String APPLICATION_NAME_SPACE = "document-signing-request-consumer";
 
     public static void main(String[] args) {
         if (allRequiredEnvironmentVariablesPresent()) {

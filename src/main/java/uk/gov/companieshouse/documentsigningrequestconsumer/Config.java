@@ -28,7 +28,7 @@ import uk.gov.companieshouse.logging.util.DataMap;
 
 import java.util.Map;
 
-import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication.NAMESPACE;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication.APPLICATION_NAME_SPACE;
 
 @Configuration
 @EnableKafka
@@ -99,7 +99,7 @@ public class Config {
 
     @Bean
     Logger getLogger() {
-        return LoggerFactory.getLogger(NAMESPACE);
+        return LoggerFactory.getLogger(APPLICATION_NAME_SPACE);
     }
 
     @Bean

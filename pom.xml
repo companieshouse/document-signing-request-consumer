@@ -302,23 +302,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <environmentVariables>
-                        <API_URL>http://api.chs.local:4001</API_URL>
-                        <INTERNAL_API_URL>http://api.chs.local:4001</INTERNAL_API_URL>
-                        <BACKOFF_DELAY>100</BACKOFF_DELAY>
-                        <BOOTSTRAP_SERVER_URL>kafka:9092</BOOTSTRAP_SERVER_URL>
-                        <CHS_API_KEY>g9yZIA81Zo9J46Kzp3JPbfld6kOqxR47EAYqXbRV</CHS_API_KEY>
-                        <CONCURRENT_LISTENER_INSTANCES>1</CONCURRENT_LISTENER_INSTANCES>
-                        <DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT>8080</DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT>
-                        <GROUP_ID>document-signing-request-consumer</GROUP_ID>
-                        <HUMAN_LOG>1</HUMAN_LOG>
-                        <INVALID_MESSAGE_TOPIC>sign-digital-document-invalid</INVALID_MESSAGE_TOPIC>
-                        <LOG_LEVEL>debug</LOG_LEVEL>
-                        <MAX_ATTEMPTS>4</MAX_ATTEMPTS>
-                        <PAYMENTS_API_URL>http://api.chs.local:4001</PAYMENTS_API_URL>
-                        <TOPIC>sign-digital-document</TOPIC>
-                        <PREFIX>docker/certified-copy</PREFIX>
-                    </environmentVariables>
                     <skipTests>${skip.unit.tests}</skipTests>
                     <excludes>
                         <exclude>**/Runner.java</exclude>

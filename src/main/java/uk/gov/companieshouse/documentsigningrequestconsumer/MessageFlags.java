@@ -2,7 +2,7 @@ package uk.gov.companieshouse.documentsigningrequestconsumer;
 
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 
 /**
  * Flags related to the state of an individual message that has been processed.

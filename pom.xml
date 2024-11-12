@@ -28,13 +28,13 @@
         <private-api-sdk-java.version>4.0.225</private-api-sdk-java.version>
         <api-sdk-manager-java-library.version>3.0.6</api-sdk-manager-java-library.version>
         <build-helper-maven-plugin>3.6.0</build-helper-maven-plugin>
-        <maven-failsafe-plugin.version>3.5.1</maven-failsafe-plugin.version>
-        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
         <system-stubs.version>2.1.7</system-stubs.version>
         <start-class>uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication</start-class>
         <spring-boot-maven-plugin.version>3.3.5</spring-boot-maven-plugin.version>
         <system-rules-version>1.19.0</system-rules-version>
-        <jetty-ee10-webapp.version>12.1.0.alpha0</jetty-ee10-webapp.version>
+        <jetty-ee10-webapp.version>12.0.15</jetty-ee10-webapp.version>
         <jetty-http2.version>12.0.15</jetty-http2.version>
 
         <!-- Docker -->

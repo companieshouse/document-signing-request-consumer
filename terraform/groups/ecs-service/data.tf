@@ -44,6 +44,7 @@ data "aws_ssm_parameter" "secret" {
   name = each.key
 }
 
+
 # retrieve all global secrets for this env using global path
 data "aws_ssm_parameters_by_path" "global_secrets" {
   path = "/${local.global_prefix}"

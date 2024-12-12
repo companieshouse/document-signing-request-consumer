@@ -86,15 +86,6 @@ variable "service_scaleup_schedule" {
   default     = ""
 }
 
-# ----------------------------------------------------------------------
-# Cloudwatch alerts
-# ----------------------------------------------------------------------
-variable "cloudwatch_alarms_enabled" {
-  description = "Whether to create a standard set of cloudwatch alarms for the service.  Requires an SNS topic to have already been created for the stack."
-  type        = bool
-  default     = true
-}
-
 
 # ------------------------------------------------------------------------------
 # Service environment variable configs
@@ -115,5 +106,16 @@ variable "use_set_environment_files" {
 variable "document_signing_request_consumer_version" {
   type        = string
   description = "The version of the document_signing_request_consumer container to run."
+}
+
+variable "service_autoscale_scale_in_cooldown" {
+  type        = number
+  description = "Cooldown in seconds for ECS Service scale in (run fewer tasks)"
+  default     = 600
+}
+variable "service_autoscale_scale_out_cooldown" {
+  type        = number
+  description = "Cooldown in seconds for ECS Service scale out (add more tasks)"
+  default     = 600
 }
 

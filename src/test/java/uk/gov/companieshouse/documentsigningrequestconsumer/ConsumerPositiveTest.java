@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -67,7 +68,7 @@ class ConsumerPositiveTest {
         }
 
         //then
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 1);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(10000L), 1);
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-retry"), is(0));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-error"), is(0));

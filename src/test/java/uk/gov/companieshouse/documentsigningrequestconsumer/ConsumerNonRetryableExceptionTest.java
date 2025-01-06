@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -68,7 +69,7 @@ class ConsumerNonRetryableExceptionTest {
         if (!latch.await(30L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(10000L), 2);
 
         //then
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));

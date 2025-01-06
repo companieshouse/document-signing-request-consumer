@@ -5,6 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAME_PARTITION_KEY;
 
+import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -59,7 +60,7 @@ class ConsumerInvalidTopicTest {
                         SAME_PARTITION_KEY,
                         DOCUMENT));
         future.get();
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(10000L) , 2);
 
         //then
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));

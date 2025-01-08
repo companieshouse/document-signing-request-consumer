@@ -58,6 +58,7 @@ public class Config {
             @Value("${invalid_message_topic}") String invalidMessageTopic) {
         return new DefaultKafkaProducerFactory<>(
                 Map.of(
+                        ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "false",
                         ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
                         ProducerConfig.ACKS_CONFIG, "all",
                         ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,

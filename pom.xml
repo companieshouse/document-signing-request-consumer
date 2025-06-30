@@ -43,6 +43,7 @@
         <!-- Structured logging -->
         <structured-logging.version>3.0.32</structured-logging.version>
         <opentelemetry-instrumentation.version>2.14.0</opentelemetry-instrumentation.version>
+        <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
     </properties>
 
     <dependencyManagement>

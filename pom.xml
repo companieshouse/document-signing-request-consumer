@@ -293,10 +293,6 @@
             <version>${sonar-maven-plugin.version}</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>sonar-scanner-api</artifactId>
-                    <groupId>org.sonarsource.scanner.api</groupId>
-                </exclusion>
-                <exclusion>
                     <groupId>io.github.hakky54</groupId>
                     <artifactId>sslcontext-kickstart</artifactId>
                 </exclusion>

@@ -35,7 +35,7 @@
         <spring-boot-maven-plugin.version>3.3.5</spring-boot-maven-plugin.version>
         <system-rules-version>1.19.0</system-rules-version>
         <jetty-ee10-webapp.version>12.0.15</jetty-ee10-webapp.version>
-        <jetty-http2.version>12.0.15</jetty-http2.version>
+        <jetty-http2.version>12.0.17</jetty-http2.version>
 
         <!-- Docker -->
         <jib-maven-plugin.version>3.4.2</jib-maven-plugin.version>

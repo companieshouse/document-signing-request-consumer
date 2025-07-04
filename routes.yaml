@@ -1,5 +1,0 @@
-app_name: document-signing-request-consumer
-group: internalapi
-weight: 911
-routes:
-  1: ^/document-signing-request-consumer/healthcheck

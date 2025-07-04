@@ -40,4 +40,4 @@ Application specific attributes | Value                                | Descrip
 - Any secrets required for this service will be stored in Vault. For any updates to the Vault configuration, please consult with the **#platform** team and submit a workflow request.
 ### Useful Links
 - [ECS service config dev repository](https://github.com/companieshouse/ecs-service-configs-dev)
-- [ECS service config production repository](https://github.com/companieshouse/ecs-service-configs-production◊
+- [ECS service config production repository](https://github.com/companieshouse/ecs-service-configs-production

@@ -40,6 +40,7 @@
         <dependency-check-maven.version>12.2.0</dependency-check-maven.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <log4j-api.version>2.25.3</log4j-api.version>
+        <jose4j.version>0.9.6</jose4j.version>
         <!-- Docker -->
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
 
@@ -314,6 +315,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>${log4j-api.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+            <version>${jose4j.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

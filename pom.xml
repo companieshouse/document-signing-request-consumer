@@ -35,7 +35,7 @@
         <spring-boot-maven-plugin.version>4.0.1</spring-boot-maven-plugin.version>
         <system-rules-version>1.19.0</system-rules-version>
         <jetty-ee10-webapp.version>12.0.22</jetty-ee10-webapp.version>
-        <jetty-http2.version>12.0.22</jetty-http2.version>
+        <jetty-http2.version>12.0.25</jetty-http2.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <dependency-check-maven.version>12.2.0</dependency-check-maven.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>

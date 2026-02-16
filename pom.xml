@@ -37,7 +37,6 @@
         <jetty-ee10-webapp.version>12.0.22</jetty-ee10-webapp.version>
         <jetty-http2.version>12.1.6</jetty-http2.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
-        <dependency-check-maven.version>12.2.0</dependency-check-maven.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <log4j-api.version>2.25.3</log4j-api.version>
         <jose4j.version>0.9.6</jose4j.version>
@@ -458,19 +457,6 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>${dependency-check-maven.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

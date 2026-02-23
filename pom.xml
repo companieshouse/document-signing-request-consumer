@@ -45,7 +45,7 @@
         <system-stubs.version>2.1.8</system-stubs.version>
         <system-rules-version>1.19.0</system-rules-version>
         <jetty-ee10-webapp.version>12.1.6</jetty-ee10-webapp.version>
-        <jetty-http2.version>12.1.16</jetty-http2.version>
+        <jetty-http2.version>12.1.6</jetty-http2.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <log4j-api.version>2.25.3</log4j-api.version>

@@ -26,7 +26,7 @@
         <build-helper-maven-plugin>3.6.0</build-helper-maven-plugin>
         <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
 
-        <spring-boot-dependencies.version>4.1.0-M1</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>4.0.3</spring-boot-dependencies.version>
         <spring-core.version>7.0.5</spring-core.version>
 
         <!-- CH dependencies -->

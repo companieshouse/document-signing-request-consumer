@@ -9,16 +9,17 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.C
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.DESCRIPTION;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.DOCUMENT_TYPE;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.FILING_HISTORY_DESCRIPTION_VALUES;
-import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.TYPE;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.PRIVATE_S3_LOCATION;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.TYPE;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import uk.gov.companieshouse.api.model.documentsigning.CoverSheetDataApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.util.DataMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public final class ApiUtils {
     public static SignPDFApi mapMessageToRequest(EnvironmentReader environmentReader, ServiceParameters parameters) {

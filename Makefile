@@ -25,6 +25,10 @@ test: test-unit
 test-unit: clean
 	mvn test
 
+.PHONY: docker-image
+docker-image: clean
+	mvn package -Dskip.unit.tests=true -Dskip.integration.tests=true jib:dockerBuild
+
 .PHONY: package
 package:
 ifndef version

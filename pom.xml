@@ -27,7 +27,7 @@
         <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
 
         <!-- Spring Boot dependencies -->
-        <spring-boot.version>3.5.11</spring-boot.version>
+        <spring-boot.version>3.5.12</spring-boot.version>
         <spring-kafka.version>3.3.13</spring-kafka.version>
         <spring-core.version>6.2.16</spring-core.version>
 

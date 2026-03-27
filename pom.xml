@@ -26,10 +26,13 @@
         <build-helper-maven-plugin>3.6.0</build-helper-maven-plugin>
         <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
 
+        <!-- Configuration Flags -->
+        <skip.unit.tests>false</skip.unit.tests>
+        <skip.integration.tests>false</skip.integration.tests>
+
         <!-- Spring Boot dependencies -->
-        <spring-boot.version>3.5.11</spring-boot.version>
-        <spring-kafka.version>3.3.13</spring-kafka.version>
-        <spring-core.version>6.2.16</spring-core.version>
+        <spring-boot-dependencies.version>4.0.4</spring-boot-dependencies.version>
+        <spring-core.version>7.0.5</spring-core.version>
 
         <!-- CH dependencies -->
         <environment-reader-library.version>3.0.5</environment-reader-library.version>
@@ -88,7 +91,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
+                <version>${spring-boot-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -151,22 +154,22 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot.version}</version>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-<!--            <version>${spring-kafka.version}</version>-->
         </dependency>
 
         <!-- OpenTelemetry Dependencies -->
@@ -234,19 +237,18 @@
         <!-- Testing Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring-boot.version}</version>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
-<!--            <version>${spring-kafka.version}</version>-->
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>org.pcollections</groupId>
-                    <artifactId>pcollections</artifactId>
+                    <groupId>com.dynatrace.hash4j</groupId>
+                    <artifactId>hash4j</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

@@ -1,26 +1,5 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.kafka.test.utils.KafkaTestUtils;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
-
-import java.time.Duration;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -29,6 +8,26 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAME_PARTITION_KEY;
+
+import java.time.Duration;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 
 @SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -54,7 +53,7 @@ class ConsumerNonRetryableExceptionTest {
     @Autowired
     private CountDownLatch latch;
 
-    @MockBean
+    @MockitoBean
     private Service service;
 
     @Test

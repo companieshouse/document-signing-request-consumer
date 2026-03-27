@@ -12,11 +12,14 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.EmbeddedKafkaKraftBroker;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
@@ -24,6 +27,12 @@ import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 
 @TestConfiguration
 public class TestConfig {
+
+    @Bean
+    EmbeddedKafkaBroker embeddedKafkaBroker() {
+        return new EmbeddedKafkaKraftBroker(1, 1, "echo", "echo-retry", "echo-error", "echo-invalid")
+                .brokerListProperty("spring.kafka.bootstrap-servers");
+    }
 
     @Bean
     CountDownLatch latch(@Value("${steps}") int steps) {

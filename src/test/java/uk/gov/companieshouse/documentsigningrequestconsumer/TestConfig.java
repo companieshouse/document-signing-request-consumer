@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.EmbeddedKafkaKraftBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
@@ -25,20 +24,6 @@ import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 public class TestConfig {
 
     public static final String[] TEST_TOPICS = {"echo", "echo-retry", "echo-error", "echo-invalid"};
-
-//    @Bean
-//    @Primary
-//    EmbeddedKafkaBroker embeddedKafkaBroker() {
-//        Map<String, String> properties = Map.of(
-//                "listeners", "PLAINTEXT://localhost:0",
-//                "listener.security.protocol.map", "PLAINTEXT:PLAINTEXT",
-//                "inter.broker.listener.name", "PLAINTEXT",
-//                "controller.listener.names", "PLAINTEXT",
-//                "process.roles", "broker,controller",
-//                "auto.create.topics.enable", "true");
-//
-//        return new EmbeddedKafkaKraftBroker(1, 1);
-//    }
 
     @Bean
     CountDownLatch latch(@Value("${steps}") int steps) {

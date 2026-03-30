@@ -15,8 +15,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.RetryableException;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -50,29 +49,21 @@ class ConsumerRetryableExceptionTest {
     @MockitoBean(name = "service")
     private DocumentService service;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void testRepublishToErrorTopicThroughRetryTopics() {
-        // Given
+        // Given:
         doThrow(RetryableException.class).when(service).processMessage(new ServiceParameters(DOCUMENT));
 
-        ProducerRecord<String, SignDigitalDocument> record = new ProducerRecord<>(
+        ProducerRecord<String, SignDigitalDocument> message = new ProducerRecord<>(
                 "echo", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT);
 
         // When:
-        Future<RecordMetadata> response = producer.send(record);
+        Future<RecordMetadata> response = producer.send(message);
         producer.flush();
 
         assertThat(response.isDone(), is(true));
 
-        // Then
+        // Then:
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(10000L), 5);
         assertThat(consumerRecords.count(), is(5));
 

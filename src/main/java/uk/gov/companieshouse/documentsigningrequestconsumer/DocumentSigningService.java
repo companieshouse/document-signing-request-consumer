@@ -10,6 +10,8 @@ import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.NonRetryableException;
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.RetryableException;
 import uk.gov.companieshouse.documentsigningrequestconsumer.satisfyitem.SatisfyItemApiPatch;
 import uk.gov.companieshouse.documentsigningrequestconsumer.signdocument.SignDocumentApiPost;
 import uk.gov.companieshouse.logging.Logger;

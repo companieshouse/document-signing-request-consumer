@@ -6,20 +6,16 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOC
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAME_PARTITION_KEY;
 
 import java.time.Duration;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
@@ -40,37 +36,23 @@ import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 class ConsumerInvalidTopicTest {
 
     @Autowired
-    private EmbeddedKafkaBroker embeddedKafka;
-
     private KafkaConsumer<String, SignDigitalDocument> consumer;
+
+    @Autowired
     private KafkaProducer<String, SignDigitalDocument> producer;
 
-    @BeforeEach
-    void setUp() {
-        producer = TestConfig.createKafkaProducer(embeddedKafka);
-        consumer = TestConfig.createKafkaConsumer(embeddedKafka);
-    }
-
-    @AfterEach
-    void tearDown() {
-        producer.close();
-        consumer.close();
-    }
-
     @Test
-    void testPublishToInvalidMessageTopicIfInvalidDataDeserialised() throws InterruptedException, ExecutionException {
-        //given
-        //embeddedKafkaBroker.consumeFromAllEmbeddedTopics(consumer);
+    void testPublishToInvalidMessageTopicIfInvalidDataDeserialised() {
+        // Given:
+        ProducerRecord<String, SignDigitalDocument> message = new ProducerRecord<>(
+                "echo", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT);
 
-        //when
-        Future<RecordMetadata> future =
-                producer.send(new ProducerRecord<>(
-                        "echo",
-                        0,
-                        System.currentTimeMillis(),
-                        SAME_PARTITION_KEY,
-                        DOCUMENT));
-        future.get();
+        // When:
+        Future<RecordMetadata> response = producer.send(message);
+        producer.flush();
+
+        assertThat(response.isDone(), is(true));
+
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(10000L) , 2);
 
         //then

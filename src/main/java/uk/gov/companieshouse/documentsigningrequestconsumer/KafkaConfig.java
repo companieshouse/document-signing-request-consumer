@@ -18,6 +18,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.KafkaException;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.logging.Logger;
@@ -80,7 +81,7 @@ public class KafkaConfig {
                         .build();
                 logger.error("Caught SerializationException serializing kafka message.",
                         dataMap.getLogMap());
-                throw new RuntimeException(e);
+                throw new KafkaException(e);
             }
         });
     }

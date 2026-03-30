@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
@@ -55,11 +54,11 @@ class ConsumerPositiveTest {
 
     @Test
     void testConsumeFromMainTopic() throws InterruptedException {
-        //given
+        // Given:
         ProducerRecord<String, SignDigitalDocument> message = new ProducerRecord<>(
                 "echo", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT);
 
-        //when
+        // When:
         Future<RecordMetadata> response = producer.send(message);
         producer.flush();
 
@@ -69,7 +68,7 @@ class ConsumerPositiveTest {
             fail("Timed out waiting for latch");
         }
 
-        //then
+        // Then:
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(10000L), 1);
         assertThat(consumerRecords.count(), is(1));
 

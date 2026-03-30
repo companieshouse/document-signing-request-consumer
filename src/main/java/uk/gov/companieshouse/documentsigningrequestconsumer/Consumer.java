@@ -7,6 +7,8 @@ import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.NonRetryableException;
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.RetryableException;
 
 /**
  * Consumes messages from the configured main Kafka topic.

@@ -12,18 +12,16 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.NonRetryableException;
 
 @SpringBootTest
 @EmbeddedKafka(partitions = 1, topics = { "echo", "echo-retry", "echo-error", "echo-invalid" })
@@ -32,25 +30,13 @@ import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 class KafkaIntegrationTest {
 
     @Autowired
-    private EmbeddedKafkaBroker embeddedKafka;
-
     private KafkaProducer<String, SignDigitalDocument> producer;
+
+    @Autowired
     private KafkaConsumer<String, SignDigitalDocument> consumer;
 
     @MockitoBean
     private DocumentService service;
-
-    @BeforeEach
-    void setUp() {
-        producer = TestConfig.createKafkaProducer(embeddedKafka);
-        consumer = TestConfig.createKafkaConsumer(embeddedKafka);
-    }
-
-    @AfterEach
-    void tearDown() {
-        producer.close();
-        consumer.close();
-    }
 
     @Test
     void shouldEchoMessage() {
@@ -69,8 +55,8 @@ class KafkaIntegrationTest {
 
         boolean found = false;
 
-        for (ConsumerRecord<String, SignDigitalDocument> record : records) {
-            if (record.value().equals(DOCUMENT)) {
+        for (ConsumerRecord<String, SignDigitalDocument> consumerRecord : records) {
+            if (consumerRecord.value().equals(DOCUMENT)) {
                 found = true;
                 break;
             }

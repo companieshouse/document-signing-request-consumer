@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.documentsigningrequestconsumer;
+package uk.gov.companieshouse.documentsigningrequestconsumer.exception;
 
 /**
  * A recoverable exception has occurred e.g. due to a service that is temporarily unavailable.

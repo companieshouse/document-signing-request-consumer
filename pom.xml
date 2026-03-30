@@ -49,14 +49,14 @@
         <mockito.version>5.21.0</mockito.version>
         <system-stubs.version>2.1.8</system-stubs.version>
         <system-rules-version>1.19.0</system-rules-version>
-        <jetty-ee10-webapp.version>12.0.22</jetty-ee10-webapp.version>
-        <jetty-http2.version>12.1.6</jetty-http2.version>
+        <jetty-ee10-webapp.version>12.1.7</jetty-ee10-webapp.version>
+        <jetty-http2.version>12.1.7</jetty-http2.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <log4j-api.version>2.25.3</log4j-api.version>
         <jose4j.version>0.9.6</jose4j.version>
         <logback.version>1.5.32</logback.version>
-        <opentelemetry-instrumentation.version>2.25.0</opentelemetry-instrumentation.version>
+        <opentelemetry-instrumentation.version>2.26.0</opentelemetry-instrumentation.version>
 
         <start-class>uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication</start-class>
 

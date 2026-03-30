@@ -9,11 +9,13 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAM
 
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,38 +42,42 @@ import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 class ConsumerPositiveTest {
 
     @Autowired
-    private EmbeddedKafkaBroker embeddedKafkaBroker;
+    private KafkaConsumer<String, SignDigitalDocument> consumer;
 
     @Autowired
-    private KafkaConsumer<String, SignDigitalDocument> testConsumer;
-
-    @Autowired
-    private KafkaProducer<String, SignDigitalDocument> testProducer;
+    private KafkaProducer<String, SignDigitalDocument> producer;
 
     @Autowired
     private CountDownLatch latch;
 
     @MockitoBean
-    private Service service;
+    private DocumentService service;
 
     @Test
     void testConsumeFromMainTopic() throws InterruptedException {
         //given
-        embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
+        ProducerRecord<String, SignDigitalDocument> message = new ProducerRecord<>(
+                "echo", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT);
 
         //when
-        testProducer.send(new ProducerRecord<>(
-                "echo", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT));
+        Future<RecordMetadata> response = producer.send(message);
+        producer.flush();
+
+        assertThat(response.isDone(), is(true));
+
         if (!latch.await(30L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }
 
         //then
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(10000L), 1);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(10000L), 1);
+        assertThat(consumerRecords.count(), is(1));
+
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-retry"), is(0));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-error"), is(0));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-invalid"), is(0));
+
         verify(service).processMessage(new ServiceParameters(DOCUMENT));
     }
 }

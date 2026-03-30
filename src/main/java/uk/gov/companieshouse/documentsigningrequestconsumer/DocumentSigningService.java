@@ -4,7 +4,8 @@ import static com.fasterxml.jackson.databind.util.ClassUtil.getRootCause;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.ApiUtils.getLogMap;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.GROUP_ITEM;
 import static uk.gov.companieshouse.documentsigningrequestconsumer.MessageKeys.ORDER_ID;
-import org.springframework.stereotype.Component;
+
+import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.ApiResponse;
@@ -17,8 +18,9 @@ import uk.gov.companieshouse.logging.Logger;
  * Makes sign PDF requests to Document Signing API.
  * Makes satisfy item requests to Item Group Workflow API.
  */
-@Component
-public class DocumentSigningService implements Service {
+@Service
+public class DocumentSigningService implements DocumentService {
+
     public static final String SIGN_PDF_URI = "/document-signing/sign-pdf";
     public static final String COVERSHEET_OPTION = "cover-sheet";
     public static final String APPLICATION_PDF = "application-pdf";
@@ -40,7 +42,8 @@ public class DocumentSigningService implements Service {
      * @throws NonRetryableException (Exception)
      */
     @Override
-    public void processMessage(ServiceParameters parameters) {
+    public void processMessage(final ServiceParameters parameters) {
+        logger.info("processMessage() method called.");
 
         final String orderId = parameters.getData().get(ORDER_ID).toString();
         final String itemGroupId = parameters.getData().get(GROUP_ITEM).toString();
@@ -61,9 +64,11 @@ public class DocumentSigningService implements Service {
         } catch (ApiErrorResponseException apiException) {
             logger.error("Error response from INTERNAL API: " + apiException, getLogMap(orderId, itemGroupId, apiException));
             throw new RetryableException("Attempting retry due to failed response", apiException);
+
         } catch (URIValidationException uriException) {
             logger.error("Error with URI: " + uriException, getLogMap(orderId, itemGroupId, uriException));
             throw new RetryableException("Attempting retry due to URI validation error", uriException);
+
         } catch (Exception exception) {
             final var rootCause = getRootCause(exception);
             logger.error("NonRetryable Error: " + rootCause, getLogMap(orderId, itemGroupId, rootCause));

@@ -13,6 +13,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,29 +40,38 @@ import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 class ConsumerInvalidTopicTest {
 
     @Autowired
-    private EmbeddedKafkaBroker embeddedKafkaBroker;
+    private EmbeddedKafkaBroker embeddedKafka;
 
-    @Autowired
-    private KafkaConsumer<String, SignDigitalDocument> testConsumer;
+    private KafkaConsumer<String, SignDigitalDocument> consumer;
+    private KafkaProducer<String, SignDigitalDocument> producer;
 
-    @Autowired
-    private KafkaProducer<String, SignDigitalDocument> testProducer;
+    @BeforeEach
+    void setUp() {
+        producer = TestConfig.createKafkaProducer(embeddedKafka);
+        consumer = TestConfig.createKafkaConsumer(embeddedKafka);
+    }
+
+    @AfterEach
+    void tearDown() {
+        producer.close();
+        consumer.close();
+    }
 
     @Test
     void testPublishToInvalidMessageTopicIfInvalidDataDeserialised() throws InterruptedException, ExecutionException {
         //given
-        embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
+        //embeddedKafkaBroker.consumeFromAllEmbeddedTopics(consumer);
 
         //when
         Future<RecordMetadata> future =
-                testProducer.send(new ProducerRecord<>(
+                producer.send(new ProducerRecord<>(
                         "echo",
                         0,
                         System.currentTimeMillis(),
                         SAME_PARTITION_KEY,
                         DOCUMENT));
         future.get();
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(10000L) , 2);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(10000L) , 2);
 
         //then
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));

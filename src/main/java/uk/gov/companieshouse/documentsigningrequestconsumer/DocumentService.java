@@ -3,7 +3,7 @@ package uk.gov.companieshouse.documentsigningrequestconsumer;
 /**
  * Processes an incoming message.
  */
-public interface Service {
+public interface DocumentService {
 
     /**
      * Processes an incoming message.

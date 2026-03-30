@@ -14,10 +14,10 @@ import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 @Component
 public class Consumer {
 
-    private final Service service;
+    private final DocumentService service;
     private final MessageFlags messageFlags;
 
-    public Consumer(Service service, MessageFlags messageFlags) {
+    public Consumer(DocumentService service, MessageFlags messageFlags) {
         this.service = service;
         this.messageFlags = messageFlags;
     }
@@ -42,12 +42,18 @@ public class Consumer {
             dltStrategy = DltStrategy.FAIL_ON_ERROR,
             include = RetryableException.class
     )
-    public void consume(Message<SignDigitalDocument> message) {
+    public void consume(final Message<SignDigitalDocument> message) {
         try {
             service.processMessage(new ServiceParameters(message.getPayload()));
+
         } catch (RetryableException e) {
             messageFlags.setRetryable(true);
             throw e;
+
+        } catch(NonRetryableException e) {
+            messageFlags.setRetryable(false);
+            throw e;
         }
     }
+
 }

@@ -25,7 +25,7 @@ import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
-public class KafkaConfigTest {
+class KafkaConfigTest {
 
     @Mock
     private Logger logger;

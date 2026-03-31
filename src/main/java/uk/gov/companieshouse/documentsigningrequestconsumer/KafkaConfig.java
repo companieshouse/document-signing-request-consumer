@@ -4,6 +4,7 @@ import consumer.deserialization.AvroDeserializer;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.documentsigningrequestconsumer.exception.KafkaException;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
+import uk.gov.companieshouse.kafka.serialization.AvroSerializer;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.DataMap;
@@ -35,6 +37,33 @@ public class KafkaConfig {
 
         this.bootstrapServers = bootstrapServers;
         this.logger = logger;
+    }
+
+    @Bean(name = "serializerFactory")
+    public SerializerFactory serializerFactory() {
+        logger.info("serializerFactory() method called.");
+
+        return new SerializerFactory();
+    }
+
+    @Bean
+    public Serializer<SignDigitalDocument> signDigitalDocumentSerializer(final SerializerFactory serializerFactory) {
+        logger.info("signDigitalDocumentSerializer() method called.");
+
+        return (topic, data) -> {
+            try {
+                AvroSerializer<SignDigitalDocument> avroSerializer = serializerFactory.getSpecificRecordSerializer(SignDigitalDocument.class);
+                return avroSerializer.toBinary(data); //creates a leading space
+
+            } catch (SerializationException e) {
+                var dataMap = new DataMap.Builder()
+                        .topic(topic)
+                        .kafkaMessage(data.toString())
+                        .build();
+                logger.error("Caught SerializationException serializing kafka message.", dataMap.getLogMap());
+                throw new KafkaException(e);
+            }
+        };
     }
 
     @Bean(name = "consumerFactory")
@@ -55,7 +84,9 @@ public class KafkaConfig {
     }
 
     @Bean(name = "producerFactory")
-    public ProducerFactory<String, SignDigitalDocument> producerFactory(MessageFlags messageFlags, @Value("${invalid_message_topic}") String invalidMessageTopic) {
+    public ProducerFactory<String, SignDigitalDocument> producerFactory(MessageFlags messageFlags,
+            Serializer<SignDigitalDocument> signDigitalDocumentSerializer,
+            @Value("${invalid_message_topic}") String invalidMessageTopic) {
         logger.info("producerFactory(retryable=%s, topic=%s) method called.".formatted(messageFlags.isRetryable(), invalidMessageTopic));
 
         Map<String, Object> config = Map.of(
@@ -68,22 +99,7 @@ public class KafkaConfig {
                 "message.flags", messageFlags,
                 "invalid.message.topic", invalidMessageTopic);
 
-        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), (topic, data) -> {
-            try {
-                return new SerializerFactory()
-                        .getSpecificRecordSerializer(SignDigitalDocument.class)
-                        .toBinary(data); //creates a leading space
-
-            } catch (SerializationException e) {
-                var dataMap = new DataMap.Builder()
-                        .topic(topic)
-                        .kafkaMessage(data.toString())
-                        .build();
-                logger.error("Caught SerializationException serializing kafka message.",
-                        dataMap.getLogMap());
-                throw new KafkaException(e);
-            }
-        });
+        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), signDigitalDocumentSerializer);
     }
 
     @Bean

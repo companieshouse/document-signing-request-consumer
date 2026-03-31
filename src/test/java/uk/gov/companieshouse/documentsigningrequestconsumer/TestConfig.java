@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.KafkaException;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 
@@ -49,16 +50,16 @@ public class TestConfig {
     }
 
     @Bean
-    public static KafkaProducer<String, SignDigitalDocument> createKafkaProducer(final EmbeddedKafkaBroker embeddedKafkaBroker) {
+    public static KafkaProducer<String, SignDigitalDocument> createKafkaProducer(final EmbeddedKafkaBroker embeddedKafkaBroker, final SerializerFactory serializerFactory) {
         Map<String, Object> producerProps = new HashMap<>(
                 KafkaTestUtils.producerProps(embeddedKafkaBroker)
         );
 
         return new KafkaProducer<>(producerProps, new StringSerializer(), (topic, data) -> {
             try {
-                return new SerializerFactory().getSpecificRecordSerializer(SignDigitalDocument.class).toBinary(data); //creates a leading space
+                return serializerFactory.getSpecificRecordSerializer(SignDigitalDocument.class).toBinary(data); //creates a leading space
             } catch (SerializationException e) {
-                throw new RuntimeException(e);
+                throw new KafkaException(e);
             }
         });
     }

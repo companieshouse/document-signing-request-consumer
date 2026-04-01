@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.documentsigningrequestconsumer;
+package uk.gov.companieshouse.documentsigningrequestconsumer.exception;
 
 /**
  * An unrecoverable error has occurred, e.g. due to the service being misconfigured or due to invalid data.

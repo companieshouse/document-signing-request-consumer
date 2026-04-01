@@ -1,12 +1,13 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.NonRetryableException;
 
 /**
- * Test implementation of {@link Service} that always throws a {@link NonRetryableException}.
+ * Test implementation of {@link DocumentService} that always throws a {@link NonRetryableException}.
  */
-@Component
-class NonRetryableExceptionService implements Service {
+@Component("nonRetryableExceptionService")
+class NonRetryableExceptionService implements DocumentService {
 
     @Override
     public void processMessage(ServiceParameters parameters) {

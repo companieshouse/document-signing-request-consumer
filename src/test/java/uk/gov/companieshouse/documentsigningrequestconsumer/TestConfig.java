@@ -1,29 +1,30 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-
 import consumer.deserialization.AvroDeserializer;
-import consumer.serialization.AvroSerializer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
-
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.KafkaException;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 
 @TestConfiguration
 public class TestConfig {
+
+    public static final String[] TEST_TOPICS = {"echo", "echo-retry", "echo-error", "echo-invalid"};
 
     @Bean
     CountDownLatch latch(@Value("${steps}") int steps) {
@@ -31,39 +32,41 @@ public class TestConfig {
     }
 
     @Bean
-    KafkaConsumer<String, SignDigitalDocument> testConsumer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-        return new KafkaConsumer<>(
-                Map.of(
-                        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
-                        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
-                        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, AvroSerializer.class,
-                        ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class,
-                        ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, AvroDeserializer.class,
-                        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest",
-                        ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false",
-                        ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString()),
-                new StringDeserializer(), new AvroDeserializer<>(SignDigitalDocument.class));
+    public static KafkaConsumer<String, SignDigitalDocument> createKafkaConsumer(final EmbeddedKafkaBroker embeddedKafkaBroker) {
+        Map<String, Object> consumerProps =
+                KafkaTestUtils.consumerProps(embeddedKafkaBroker, "test-group", true);
+
+        consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        KafkaConsumer<String, SignDigitalDocument> consumer = new KafkaConsumer<>(
+                consumerProps,
+                new StringDeserializer(),
+                new AvroDeserializer<>(SignDigitalDocument.class));
+
+        consumer.subscribe(List.of(TEST_TOPICS));
+
+        return consumer;
+
     }
 
     @Bean
-    KafkaProducer<String, SignDigitalDocument> testProducer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-        return new KafkaProducer<>(
-                Map.of(
-                        ProducerConfig.ACKS_CONFIG, "all",
-                        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers),
-                new StringSerializer(),
-                (topic, data) -> {
-                    try {
-                        return new SerializerFactory().getSpecificRecordSerializer(SignDigitalDocument.class).toBinary(data); //creates a leading space
-                    } catch (SerializationException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+    public static KafkaProducer<String, SignDigitalDocument> createKafkaProducer(final EmbeddedKafkaBroker embeddedKafkaBroker, final SerializerFactory serializerFactory) {
+        Map<String, Object> producerProps = new HashMap<>(
+                KafkaTestUtils.producerProps(embeddedKafkaBroker)
+        );
+
+        return new KafkaProducer<>(producerProps, new StringSerializer(), (topic, data) -> {
+            try {
+                return serializerFactory.getSpecificRecordSerializer(SignDigitalDocument.class).toBinary(data); //creates a leading space
+            } catch (SerializationException e) {
+                throw new KafkaException(e);
+            }
+        });
     }
 
-    @Bean
+    @Bean(name = "service")
     @Primary
-    public Service getService() {
+    public DocumentService getService() {
         return new NonRetryableExceptionService();
     }
 }

@@ -6,7 +6,6 @@ import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOC
 import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAME_PARTITION_KEY;
 
 import java.time.Duration;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
@@ -38,29 +36,24 @@ import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 class ConsumerInvalidTopicTest {
 
     @Autowired
-    private EmbeddedKafkaBroker embeddedKafkaBroker;
+    private KafkaConsumer<String, SignDigitalDocument> consumer;
 
     @Autowired
-    private KafkaConsumer<String, SignDigitalDocument> testConsumer;
-
-    @Autowired
-    private KafkaProducer<String, SignDigitalDocument> testProducer;
+    private KafkaProducer<String, SignDigitalDocument> producer;
 
     @Test
-    void testPublishToInvalidMessageTopicIfInvalidDataDeserialised() throws InterruptedException, ExecutionException {
-        //given
-        embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
+    void testPublishToInvalidMessageTopicIfInvalidDataDeserialised() {
+        // Given:
+        ProducerRecord<String, SignDigitalDocument> message = new ProducerRecord<>(
+                "echo", 0, System.currentTimeMillis(), SAME_PARTITION_KEY, DOCUMENT);
 
-        //when
-        Future<RecordMetadata> future =
-                testProducer.send(new ProducerRecord<>(
-                        "echo",
-                        0,
-                        System.currentTimeMillis(),
-                        SAME_PARTITION_KEY,
-                        DOCUMENT));
-        future.get();
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(10000L) , 2);
+        // When:
+        Future<RecordMetadata> response = producer.send(message);
+        producer.flush();
+
+        assertThat(response.isDone(), is(true));
+
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(consumer, Duration.ofMillis(10000L) , 2);
 
         //then
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));

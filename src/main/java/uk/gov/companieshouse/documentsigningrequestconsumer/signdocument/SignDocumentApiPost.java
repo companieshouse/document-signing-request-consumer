@@ -12,7 +12,7 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFApi;
 import uk.gov.companieshouse.api.model.documentsigning.SignPDFResponseApi;
 import uk.gov.companieshouse.documentsigningrequestconsumer.ApiClientService;
-import uk.gov.companieshouse.documentsigningrequestconsumer.RetryableException;
+import uk.gov.companieshouse.documentsigningrequestconsumer.exception.RetryableException;
 import uk.gov.companieshouse.documentsigningrequestconsumer.ServiceParameters;
 import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.Logger;

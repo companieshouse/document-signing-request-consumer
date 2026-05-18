@@ -24,7 +24,7 @@
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <spring-boot-maven-plugin.version>4.0.1</spring-boot-maven-plugin.version>
         <build-helper-maven-plugin>3.6.0</build-helper-maven-plugin>
-        <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
+        <sonar-maven-plugin.version>5.6.0.6792</sonar-maven-plugin.version>
 
         <!-- Configuration Flags -->
         <skip.unit.tests>false</skip.unit.tests>
@@ -383,6 +383,12 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
+            <version>${log4j-api.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
             <version>${log4j-api.version}</version>
             <scope>compile</scope>
         </dependency>

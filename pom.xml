@@ -56,7 +56,7 @@
         <log4j-api.version>2.26.0</log4j-api.version>
         <jose4j.version>0.9.6</jose4j.version>
         <logback.version>1.5.32</logback.version>
-        <opentelemetry-instrumentation.version>2.26.0</opentelemetry-instrumentation.version>
+        <opentelemetry-instrumentation.version>2.27.0</opentelemetry-instrumentation.version>
 
         <start-class>uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication</start-class>
 

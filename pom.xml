@@ -20,8 +20,8 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
-        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <spring-boot-maven-plugin.version>4.0.1</spring-boot-maven-plugin.version>
         <build-helper-maven-plugin>3.6.0</build-helper-maven-plugin>
         <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
@@ -31,8 +31,7 @@
         <skip.integration.tests>false</skip.integration.tests>
 
         <!-- Spring Boot dependencies -->
-        <spring-boot-dependencies.version>4.0.4</spring-boot-dependencies.version>
-        <spring-core.version>7.0.5</spring-core.version>
+        <spring-boot-dependencies.version>4.0.6</spring-boot-dependencies.version>
 
         <!-- CH dependencies -->
         <environment-reader-library.version>3.0.5</environment-reader-library.version>
@@ -126,11 +125,6 @@
                         <artifactId>commons-compress</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring-core.version}</version>
             </dependency>
             <!-- CVE: https://dependency-track.companieshouse.gov.uk/vulnerabilities/NVD/CVE-2026-1225 -->
             <dependency>

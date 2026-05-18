@@ -56,6 +56,7 @@
         <log4j-api.version>2.26.0</log4j-api.version>
         <jose4j.version>0.9.6</jose4j.version>
         <logback.version>1.5.32</logback.version>
+        <plexus-utils.version>4.0.3</plexus-utils.version>
         <opentelemetry-instrumentation.version>2.27.0</opentelemetry-instrumentation.version>
 
         <start-class>uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication</start-class>
@@ -156,6 +157,13 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <!-- CVE: https://dependency-track.companieshouse.gov.uk/vulnerabilities/NVD/CVE-2025-67030 -->
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils.version}</version>
                 <scope>compile</scope>
             </dependency>
         </dependencies>

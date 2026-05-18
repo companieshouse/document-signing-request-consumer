@@ -20,19 +20,18 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
-        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <spring-boot-maven-plugin.version>4.0.1</spring-boot-maven-plugin.version>
         <build-helper-maven-plugin>3.6.0</build-helper-maven-plugin>
-        <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
+        <sonar-maven-plugin.version>5.6.0.6792</sonar-maven-plugin.version>
 
         <!-- Configuration Flags -->
         <skip.unit.tests>false</skip.unit.tests>
         <skip.integration.tests>false</skip.integration.tests>
 
         <!-- Spring Boot dependencies -->
-        <spring-boot-dependencies.version>4.0.4</spring-boot-dependencies.version>
-        <spring-core.version>7.0.5</spring-core.version>
+        <spring-boot-dependencies.version>4.1.0-RC1</spring-boot-dependencies.version>
 
         <!-- CH dependencies -->
         <environment-reader-library.version>3.0.5</environment-reader-library.version>
@@ -49,11 +48,12 @@
         <mockito.version>5.21.0</mockito.version>
         <system-stubs.version>2.1.8</system-stubs.version>
         <system-rules-version>1.19.0</system-rules-version>
-        <jetty-ee10-webapp.version>12.1.7</jetty-ee10-webapp.version>
-        <jetty-http2.version>12.1.7</jetty-http2.version>
+        <jetty-ee10-webapp.version>12.1.9</jetty-ee10-webapp.version>
+        <jetty-http2.version>12.1.9</jetty-http2.version>
+        <tomcat-embed.version>11.0.22</tomcat-embed.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
-        <log4j-api.version>2.25.3</log4j-api.version>
+        <log4j-api.version>2.26.0</log4j-api.version>
         <jose4j.version>0.9.6</jose4j.version>
         <logback.version>1.5.32</logback.version>
         <opentelemetry-instrumentation.version>2.26.0</opentelemetry-instrumentation.version>
@@ -128,9 +128,22 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring-core.version}</version>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat-embed.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat-embed.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat-embed.version}</version>
+                <scope>compile</scope>
             </dependency>
             <!-- CVE: https://dependency-track.companieshouse.gov.uk/vulnerabilities/NVD/CVE-2026-1225 -->
             <dependency>
@@ -370,6 +383,12 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
+            <version>${log4j-api.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
             <version>${log4j-api.version}</version>
             <scope>compile</scope>
         </dependency>

@@ -15,7 +15,7 @@ public class ApiClientService {
     }
 
     public InternalApiClient getInternalApiClient() {
-        final var client = ApiSdkManager.getPrivateSDK();
+        var client = ApiSdkManager.getPrivateSDK();
         client.setInternalBasePath(internalApiUrl);
         return client;
     }

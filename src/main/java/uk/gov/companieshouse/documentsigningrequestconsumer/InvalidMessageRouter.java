@@ -1,11 +1,10 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
+import java.util.Map;
 import org.apache.kafka.clients.producer.ProducerInterceptor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
-
-import java.util.Map;
 
 /**
  * Routes a message to the invalid letter topic if a non-retryable error has been thrown during message processing.

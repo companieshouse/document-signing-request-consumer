@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
@@ -30,21 +31,21 @@ public class Consumer {
      * @param message A message containing a payload.
      */
     @KafkaListener(
-            id = "${consumer.group_id}",
+            id = "${consumer.group-id}",
             containerFactory = "kafkaListenerContainerFactory",
             topics = "${consumer.topic}",
-            groupId = "${consumer.group_id}",
+            groupId = "${consumer.group-id}",
             autoStartup = "true"
     )
     @RetryableTopic(
-            attempts = "${consumer.max_attempts}",
+            attempts = "${consumer.max-attempts}",
             autoCreateTopics = "false",
-            backOff = @BackOff(delayString = "${consumer.backoff_delay}"),
+            backOff = @BackOff(delayString = "${consumer.backoff-delay}"),
             dltTopicSuffix = "-error",
             dltStrategy = DltStrategy.FAIL_ON_ERROR,
             include = RetryableException.class
     )
-    public void consume(final Message<SignDigitalDocument> message) {
+    public void consume(final Message<@NonNull SignDigitalDocument> message) {
         try {
             service.processMessage(new ServiceParameters(message.getPayload()));
 

@@ -29,10 +29,9 @@ public class ServiceParameters {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ServiceParameters)) {
+        if (!(o instanceof ServiceParameters that)) {
             return false;
         }
-        ServiceParameters that = (ServiceParameters) o;
         return Objects.equals(getData(), that.getData());
     }
 

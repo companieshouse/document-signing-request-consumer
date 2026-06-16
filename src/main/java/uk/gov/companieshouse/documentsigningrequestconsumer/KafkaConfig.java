@@ -7,6 +7,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -67,7 +68,7 @@ public class KafkaConfig {
     }
 
     @Bean(name = "consumerFactory")
-    public ConsumerFactory<String, SignDigitalDocument> consumerFactory() {
+    public ConsumerFactory<@NonNull String, SignDigitalDocument> consumerFactory() {
         logger.info("consumerFactory() method called.");
 
         return new DefaultKafkaConsumerFactory<>(
@@ -84,9 +85,9 @@ public class KafkaConfig {
     }
 
     @Bean(name = "producerFactory")
-    public ProducerFactory<String, SignDigitalDocument> producerFactory(MessageFlags messageFlags,
+    public ProducerFactory<@NonNull String, SignDigitalDocument> producerFactory(MessageFlags messageFlags,
             Serializer<SignDigitalDocument> signDigitalDocumentSerializer,
-            @Value("${invalid_message_topic}") String invalidMessageTopic) {
+            @Value("${invalid-message-topic}") String invalidMessageTopic) {
         logger.info("producerFactory(retryable=%s, topic=%s) method called.".formatted(messageFlags.isRetryable(), invalidMessageTopic));
 
         Map<String, Object> config = Map.of(
@@ -103,22 +104,23 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, SignDigitalDocument> kafkaTemplate(ProducerFactory<String, SignDigitalDocument> producerFactory) {
+    public KafkaTemplate<@NonNull String, @NonNull SignDigitalDocument> kafkaTemplate(ProducerFactory<@NonNull String, SignDigitalDocument> producerFactory) {
         logger.info("kafkaTemplate() method called.");
 
         return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> kafkaListenerContainerFactory(
-            ConsumerFactory<String, SignDigitalDocument> consumerFactory,
+    public ConcurrentKafkaListenerContainerFactory<@NonNull String, @NonNull SignDigitalDocument> kafkaListenerContainerFactory(
+            ConsumerFactory<@NonNull String, SignDigitalDocument> consumerFactory,
             @Value("${consumer.concurrency}") Integer concurrency) {
         logger.info("kafkaListenerContainerFactory() method called.");
 
-        ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<@NonNull String, @NonNull SignDigitalDocument> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(concurrency);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
+
         return factory;
     }
 

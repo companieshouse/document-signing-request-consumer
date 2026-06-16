@@ -1,0 +1,60 @@
+spring:
+
+  application:
+    name: document-signing-request-consumer
+
+  kafka:
+    bootstrap-servers: ${BOOTSTRAP_SERVER_URL}
+
+consumer:
+  topic: ${TOPIC}
+  group-id: ${GROUP_ID}
+  max-attempts: ${MAX_ATTEMPTS}
+  backoff-delay: ${BACKOFF_DELAY}
+  concurrency: ${CONCURRENT_LISTENER_INSTANCES}
+
+invalid-message-topic: ${INVALID_MESSAGE_TOPIC}
+
+internal:
+  api:
+    url: ${INTERNAL_API_URL}
+
+# Actuator health check config
+management:
+
+  # OpenTelemetry configuration
+  opentelemetry:
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}/v1/logs
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}/v1/traces
+  otlp:
+    metrics:
+      export:
+        url: ${OTEL_EXPORTER_OTLP_ENDPOINT}/v1/metrics
+
+  # Spring Boot Management
+  endpoints:
+    web:
+      exposure:
+        include: health
+      base-path: /document-signing-request-consumer
+      path-mapping:
+        health: healthcheck
+  endpoint:
+    health:
+      access: read_only
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+
+  # Default application root path
+server:
+  port: ${DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT:8181}
+  servlet:
+    context-path: /document-signing-request-consumer

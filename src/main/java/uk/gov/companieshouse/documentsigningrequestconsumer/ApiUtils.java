@@ -22,6 +22,7 @@ import uk.gov.companieshouse.environment.EnvironmentReader;
 import uk.gov.companieshouse.logging.util.DataMap;
 
 public final class ApiUtils {
+
     public static SignPDFApi mapMessageToRequest(EnvironmentReader environmentReader, ServiceParameters parameters) {
         SignPDFApi requestBody = new SignPDFApi();
         requestBody.setDocumentLocation(parameters.getData().get(PRIVATE_S3_LOCATION).toString());

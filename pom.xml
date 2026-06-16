@@ -172,6 +172,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
             <version>${spring-boot-starter-aop.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

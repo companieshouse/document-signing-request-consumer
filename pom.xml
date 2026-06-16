@@ -44,7 +44,6 @@
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <msgpack-core.version>0.9.12</msgpack-core.version>
         <tomcat-embed-core.version>11.0.22</tomcat-embed-core.version>
-        <opentelemetry-api.version>1.62.0</opentelemetry-api.version>
 
         <!-- companies house -->
         <sdk-manager-java.version>3.0.14</sdk-manager-java.version>

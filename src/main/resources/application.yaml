@@ -19,6 +19,9 @@ internal:
   api:
     url: ${INTERNAL_API_URL}
 
+logger:
+  namespace: document-signing-request-consumer
+
 # Actuator health check config
 management:
 
@@ -47,7 +50,8 @@ management:
         health: healthcheck
   endpoint:
     health:
-      access: read_only
+      enabled: true
+#      access: read_only
       show-details: always
   health:
     defaults:

@@ -72,4 +72,14 @@ module "ecs-service" {
   task_secrets              = local.task_secrets
   app_environment_filename  = local.app_environment_filename
   use_set_environment_files = local.use_set_environment_files
+
+  # Pass health check configuration, including optional startPeriod
+  task_healthcheck_interval     = var.task_healthcheck_interval
+  task_healthcheck_timeout      = var.task_healthcheck_timeout
+  task_healthcheck_retries      = var.task_healthcheck_retries
+  task_healthcheck_start_period = var.task_healthcheck_start_period
+
+  # ELB healthcheck grace period
+  health_check_grace_period_seconds = var.health_check_grace_period_seconds
+
 }

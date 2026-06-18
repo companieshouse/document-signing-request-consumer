@@ -119,3 +119,36 @@ variable "service_autoscale_scale_out_cooldown" {
   default     = 600
 }
 
+# ------------------------------------------------------------------------------
+# Healthcheck environment variable configs
+# ------------------------------------------------------------------------------
+
+variable "task_healthcheck_interval" {
+  type        = number
+  description = "Health check interval configuration for ECS task definitions."
+  default = 60
+}
+
+variable "task_healthcheck_timeout" {
+  type        = number
+  description = "Health check timeout configuration for ECS task definitions."
+  default = 5
+}
+
+variable "task_healthcheck_retries" {
+  type        = number
+  description = "Health check retries configuration for ECS task definitions."
+  default = 3
+}
+
+variable "task_healthcheck_start_period" {
+  type        = number
+  description = "Health check start period configuration for ECS task definitions."
+  default = 60
+}
+
+variable "health_check_grace_period_seconds" {
+  type        = number
+  description = "The grace period, in seconds, to ignore failing health checks after a task has started."
+  default = 120
+}

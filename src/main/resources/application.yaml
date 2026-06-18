@@ -45,20 +45,22 @@ management:
     web:
       exposure:
         include: health
-      base-path: /document-signing-request-consumer
+      base-path: ""
       path-mapping:
         health: healthcheck
   endpoint:
     health:
-      enabled: true
-#      access: read_only
+      access: read_only
       show-details: always
+      probes:
+        enabled: true
   health:
     defaults:
       enabled: true
 
-  # Default application root path
 server:
   port: ${DOCUMENT_SIGNING_REQUEST_CONSUMER_PORT:8181}
+
+  # Default application root path
   servlet:
     context-path: /document-signing-request-consumer

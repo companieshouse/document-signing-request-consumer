@@ -9,19 +9,19 @@ spring:
 
 consumer:
   topic: echo
-  group_id: echo-consumer
-  max_attempts: 4
-  backoff_delay: 100
+  group-id: echo-consumer
+  max-attempts: 4
+  backoff-delay: 100
   concurrency: 1
 
-error_consumer:
-  topic: echo-error
-  group_id: echo-error-consumer
-  enabled: false
-  dlt: echo-retry
-  concurrency: 1
+#error_consumer:
+#  topic: echo-error
+#  group_id: echo-error-consumer
+#  enabled: false
+#  dlt: echo-retry
+#  concurrency: 1
 
-invalid_message_topic: echo-invalid
+invalid-message-topic: echo-invalid
 
 logger:
   namespace: archetype-client

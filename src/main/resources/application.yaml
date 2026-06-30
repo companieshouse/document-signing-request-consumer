@@ -39,12 +39,6 @@ management:
       export:
         otlp:
           endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}/v1/traces
-      sampler:
-        otel:
-          sampler:
-            jaeger:
-              remote:
-                endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
   otlp:
     metrics:
       export:

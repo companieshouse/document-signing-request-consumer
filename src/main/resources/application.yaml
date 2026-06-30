@@ -5,6 +5,10 @@ spring:
 
   kafka:
     bootstrap-servers: ${BOOTSTRAP_SERVER_URL}
+    listener:
+      observation-enabled: true
+    template:
+      observation-enabled: true
 
 consumer:
   topic: ${TOPIC}
@@ -35,6 +39,12 @@ management:
       export:
         otlp:
           endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}/v1/traces
+      sampler:
+        otel:
+          sampler:
+            jaeger:
+              remote:
+                endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
   otlp:
     metrics:
       export:

@@ -5,6 +5,10 @@ spring:
 
   kafka:
     bootstrap-servers: ${BOOTSTRAP_SERVER_URL}
+    listener:
+      observation-enabled: true
+    template:
+      observation-enabled: true
 
 consumer:
   topic: ${TOPIC}

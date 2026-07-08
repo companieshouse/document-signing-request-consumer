@@ -31,6 +31,9 @@ management:
 
   # OpenTelemetry configuration
   opentelemetry:
+    resource:
+      attributes:
+        service.name: document-signing-request-consumer
     logging:
       export:
         otlp:

@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer.telemetry;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,20 +72,17 @@ class KafkaSpanNameProcessorTest {
 
     @Test
     void isStartRequired_returnsTrue() {
-        // Then
-        assert underTest.isStartRequired();
+        assertTrue(underTest.isStartRequired());
     }
 
     @Test
     void isEndRequired_returnsFalse() {
-        // Then
-        assert !underTest.isEndRequired();
+        assertFalse(underTest.isEndRequired());
     }
 
     @Test
     void onEnd_doesNothing() {
-        // When / Then (no exception thrown, no interactions)
-        underTest.onEnd(readableSpan);
+        assertDoesNotThrow(() -> underTest.onEnd(readableSpan));
     }
 }
 

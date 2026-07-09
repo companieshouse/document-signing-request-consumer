@@ -18,6 +18,8 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
+import org.springframework.kafka.support.micrometer.KafkaListenerObservation.DefaultKafkaListenerObservationConvention;
+import org.springframework.kafka.support.micrometer.KafkaRecordReceiverContext;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.documentsigningrequestconsumer.exception.KafkaException;
@@ -113,13 +115,20 @@ public class KafkaConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<@NonNull String, @NonNull SignDigitalDocument> kafkaListenerContainerFactory(
             ConsumerFactory<@NonNull String, SignDigitalDocument> consumerFactory,
-            @Value("${consumer.concurrency}") Integer concurrency) {
+            @Value("${consumer.concurrency}") Integer concurrency,
+            @Value("${spring.application.name}") String serviceName) {
         logger.info("kafkaListenerContainerFactory() method called.");
 
         ConcurrentKafkaListenerContainerFactory<@NonNull String, @NonNull SignDigitalDocument> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(concurrency);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
+        factory.getContainerProperties().setObservationConvention(new DefaultKafkaListenerObservationConvention() {
+            @Override
+            public String getContextualName(final KafkaRecordReceiverContext context) {
+                return serviceName;
+            }
+        });
 
         return factory;
     }

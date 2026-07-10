@@ -123,6 +123,7 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(concurrency);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
+        factory.getContainerProperties().setObservationEnabled(true);
         factory.getContainerProperties().setObservationConvention(new DefaultKafkaListenerObservationConvention() {
             @Override
             public String getContextualName(final KafkaRecordReceiverContext context) {

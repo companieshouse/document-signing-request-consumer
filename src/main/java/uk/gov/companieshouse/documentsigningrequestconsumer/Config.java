@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.documentsigningrequestconsumer;
 
-import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication.APPLICATION_NAME_SPACE;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Application.APPLICATION_NAME_SPACE;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

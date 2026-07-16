@@ -23,7 +23,7 @@ import uk.gov.companieshouse.logging.LoggerFactory;
  * "Test" class re-purposed to produce {@link SignDigitalDocument} messages to the <code>sign-digital-document</code>
  * topic in Tilt. This is NOT to be run as part of an automated test suite. It is for manual testing only.
  */
-@SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class,
+@SpringBootTest(classes = Application.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @TestPropertySource(locations="classpath:sign-digital-document-in-tilt.properties")

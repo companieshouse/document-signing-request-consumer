@@ -6,7 +6,7 @@ import uk.gov.companieshouse.environment.impl.EnvironmentReaderImpl;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
-import static uk.gov.companieshouse.documentsigningrequestconsumer.DocumentSigningRequestConsumerApplication.APPLICATION_NAME_SPACE;
+import static uk.gov.companieshouse.documentsigningrequestconsumer.Application.APPLICATION_NAME_SPACE;
 
 public class EnvironmentVariablesChecker {
 

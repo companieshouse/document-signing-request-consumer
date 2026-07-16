@@ -56,11 +56,11 @@ class DocumentSigningRequestConsumerApplicationTests {
     void runsAppWhenAllRequiredEnvironmentVariablesPresent() {
 
         try (final var app = mockStatic(SpringApplication.class)) {
-            app.when(() -> SpringApplication.run(DocumentSigningRequestConsumerApplication.class, new String[0])).thenReturn(null);
+            app.when(() -> SpringApplication.run(Application.class, new String[0])).thenReturn(null);
 
-            DocumentSigningRequestConsumerApplication.main(new String[]{});
+            Application.main(new String[]{});
 
-            app.verify(() -> SpringApplication.run(DocumentSigningRequestConsumerApplication.class, new String[0]));
+            app.verify(() -> SpringApplication.run(Application.class, new String[0]));
         }
 
     }
@@ -73,11 +73,11 @@ class DocumentSigningRequestConsumerApplicationTests {
 
         try (final var app = mockStatic(SpringApplication.class)) {
 
-            app.when(() -> SpringApplication.run(DocumentSigningRequestConsumerApplication.class, new String[0])).thenReturn(null);
+            app.when(() -> SpringApplication.run(Application.class, new String[0])).thenReturn(null);
 
-            DocumentSigningRequestConsumerApplication.main(new String[]{});
+            Application.main(new String[]{});
 
-            app.verify(() -> SpringApplication.run(DocumentSigningRequestConsumerApplication.class, new String[0]), times(0));
+            app.verify(() -> SpringApplication.run(Application.class, new String[0]), times(0));
         }
 
     }

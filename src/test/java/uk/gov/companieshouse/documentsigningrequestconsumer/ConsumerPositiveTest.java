@@ -28,7 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 
-@SpringBootTest(classes = DocumentSigningRequestConsumerApplication.class)
+@SpringBootTest(classes = Application.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
         topics = {"echo", "echo-retry", "echo-error", "echo-invalid"},

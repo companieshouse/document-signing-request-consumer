@@ -202,16 +202,6 @@
 
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
-            <artifactId>environment-reader-library</artifactId>
-        </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>uk.gov.companieshouse</groupId>-->
-<!--            <artifactId>private-api-sdk-java</artifactId>-->
-<!--        </dependency>-->
-
-        <dependency>
-            <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-manager-java-library</artifactId>
         </dependency>
 

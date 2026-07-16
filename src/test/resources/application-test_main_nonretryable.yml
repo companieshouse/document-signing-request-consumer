@@ -27,3 +27,21 @@ logger:
   namespace: archetype-client
 
 steps: 1
+
+# Actuator health check config
+management:
+
+  # OpenTelemetry configuration
+  opentelemetry:
+    logging:
+      export:
+        otlp:
+          endpoint: http://otel-collector:4318/v1/logs
+    tracing:
+      export:
+        otlp:
+          endpoint: http://otel-collector:4318/v1/traces
+  otlp:
+    metrics:
+      export:
+        url: http://otel-collector:4318/v1/metrics

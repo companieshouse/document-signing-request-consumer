@@ -2,10 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.12</version>
+        <version>2.1.14</version>
         <relativePath />
     </parent>
 
@@ -27,9 +28,13 @@
 
         <spring-boot-dependencies.version>4.1.1</spring-boot-dependencies.version>
 
-        <open-telemetry-bom.version>2.28.1</open-telemetry-bom.version>
-        <open-telemetry-logback.version>2.28.1-alpha</open-telemetry-logback.version>
+        <!-- OpenTelemetry Dependencies -->
+        <opentelemetry-instrumentation.version>2.31.1</opentelemetry-instrumentation.version>
+        <opentelemetry-logback.version>2.31.1-alpha</opentelemetry-logback.version>
+        <opentelemetry-semconv.version>1.42.0</opentelemetry-semconv.version>
+        <opentelemetry-semconv-incubating.version>1.42.0-alpha</opentelemetry-semconv-incubating.version>
 
+        <!-- Build Dependencies -->
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
@@ -86,13 +91,35 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- OpenTelemetry Dependencies -->
+            <dependency>
+                <groupId>io.opentelemetry.semconv</groupId>
+                <artifactId>opentelemetry-semconv</artifactId>
+                <version>${opentelemetry-semconv.version}</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.opentelemetry.semconv</groupId>
+                <artifactId>opentelemetry-semconv-incubating</artifactId>
+                <version>${opentelemetry-semconv-incubating.version}</version>
+                <scope>compile</scope>
+            </dependency>
+
             <dependency>
                 <groupId>io.opentelemetry.instrumentation</groupId>
                 <artifactId>opentelemetry-instrumentation-bom</artifactId>
-                <version>${open-telemetry-bom.version}</version>
+                <version>${opentelemetry-instrumentation.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-logback-appender-1.0</artifactId>
+                <version>${opentelemetry-logback.version}</version>
+            </dependency>
+            <!-- End of OpenTelemetry Dependencies -->
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -100,14 +127,6 @@
                 <version>${spring-boot-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-
-            <!-- Transitive Dependency: https://nvd.nist.gov/vuln/detail/CVE-2026-41178 -->
-            <dependency>
-                <groupId>io.opentelemetry.semconv</groupId>
-                <artifactId>opentelemetry-semconv</artifactId>
-                <version>1.42.0</version>
-                <scope>compile</scope>
             </dependency>
 
         </dependencies>
@@ -177,7 +196,6 @@
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-logback-appender-1.0</artifactId>
-            <version>${open-telemetry-logback.version}</version>
             <scope>compile</scope>
         </dependency>
 

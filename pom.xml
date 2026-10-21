@@ -6,7 +6,7 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.14</version>
+        <version>3.0.0</version>
         <relativePath />
     </parent>
 
@@ -42,7 +42,7 @@
         <build-helper-maven-plugin>3.6.0</build-helper-maven-plugin> <!-- itest -->
 
         <!-- Internal Dependencies -->
-        <ch-boms.version>0.1.27</ch-boms.version>
+        <ch-boms.version>0.1.32</ch-boms.version>
 
         <!-- 3rd Party dependencies -->
         <cucumber.version>7.20.1</cucumber.version>
